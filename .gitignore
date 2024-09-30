@@ -2,6 +2,8 @@
 /Doc
 /data
 
+*.csv
+
 # Ignore all JSON files
 *.json
 
