@@ -1,5 +1,6 @@
 /doc
 /Doc
+/data
 
 # Ignore all JSON files
 *.json
