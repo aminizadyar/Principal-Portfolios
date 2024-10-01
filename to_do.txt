@@ -1,0 +1,1 @@
+- There is a variant of PEP in which where the expected return is negative, I take a short position. (just the negative of position matrix)
