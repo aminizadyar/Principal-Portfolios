@@ -510,3 +510,35 @@ def singular_values_vs_realized_returns_graph(output_dict,portfolios_key,number_
     # Adjust layout
     plt.tight_layout()
     plt.show()
+
+
+def invert_usd_columns(df):
+    # Identify columns where 'Base' is USD in the first row
+    usd_columns = df.loc[0] == 'USD'
+    # Invert the values for these columns starting from index 1
+    df.loc[1:, usd_columns] = 1 / df.loc[1:, usd_columns]
+    
+    # Drop the 'Base' row (row with index 0)
+    df = df.drop(0).reset_index(drop=True)
+    
+    return df
+
+
+def convert_date_column_for_monthly_data(df):
+    return pd.to_datetime(df['date'], format='%Y%m') + pd.offsets.MonthEnd(1)
+
+
+def calculate_log_returns(df):
+    # Ensure the 'date' column is excluded from log return calculation
+    df_numeric = df.drop(columns=['date'])
+    df_numeric = df_numeric.astype(float)
+    # Calculate the logarithmic returns using numpy's log function
+    log_returns = np.log(df_numeric / df_numeric.shift(1)) * 100
+    
+    # Add back the 'date' column
+    log_returns.insert(0, 'date', df['date'])
+    
+    # Drop the first row as it will have NaN values due to the shift
+    log_returns = log_returns.dropna().reset_index(drop=True)
+    
+    return log_returns
