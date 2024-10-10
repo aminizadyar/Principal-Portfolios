@@ -1,3 +1,5 @@
 - There is a variant of PEP in which where the expected return is negative, I take a short position. (just the negative of position matrix)
 
 - I can develop a python package for Principal Portfolios.
+
+- I can take an average of Principal portfolios across signals. I believe it will greatly improve the sharp ratio. Moreover, I can use some ML algo to tune the weight of each portfolio.
