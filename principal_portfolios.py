@@ -5,6 +5,8 @@ import statsmodels.api as sm
 import warnings
 from pandas.errors import PerformanceWarning
 warnings.simplefilter(action='ignore', category=PerformanceWarning)
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MultipleLocator
 
 def rank_and_map(df):
     # Make a copy to avoid modifying the original DataFrame
@@ -447,3 +449,64 @@ def build_PP(portfolios_dataset_df, signal_df, number_of_lookback_periods,
             result_name = f'regression_result_{col}'
             output_dict[result_name] = regression_results(X,Y)
     return output_dict  
+
+
+def singular_values_vs_realized_returns_graph(output_dict,portfolios_key,number_of_portfolios,title):
+
+    x = np.arange(1, number_of_portfolios)
+    singular_values = output_dict[portfolios_key]["pp_expected_mean_df"][1:].values
+    eigenvalues_symmetric = output_dict[portfolios_key]["pep_expected_mean_df"][1:].values
+    eigenvalues_antisymmetric = output_dict[portfolios_key]["pap_expected_mean_df"][1:].values
+    pp_returns = output_dict[portfolios_key]["pp_realized_mean_df"][1:].values
+    pep_returns = output_dict[portfolios_key]["pep_realized_mean_df"][1:].values
+    pap_returns = output_dict[portfolios_key]["pap_realized_mean_df"][1:].values
+
+    plt.rcParams['axes.grid'] = True
+    # Create 3x2 subplots
+    fig, axs = plt.subplots(3, 2, figsize=(8, 12))  # 3 rows, 2 columns
+
+    # Panel A: Singular values
+    axs[0, 0].plot(x, singular_values, 'k.-')
+    axs[0, 0].set_title('Panel A. Π Singular Values')
+    axs[0, 0].set_xlabel('Eigenvalue Number')
+    axs[0, 0].set_ylabel('Singular Value')
+
+    # Panel B: Symmetric eigenvalues
+    axs[1, 0].plot(x, eigenvalues_symmetric, 'k.-')
+    axs[1, 0].set_title('Panel B. Π^s Eigenvalues')
+    axs[1, 0].set_xlabel('Eigenvalue Number')
+    axs[1, 0].set_ylabel('Eigenvalue (λ)')
+
+    # Panel C: Antisymmetric eigenvalues
+    axs[2, 0].plot(np.arange(1, int(number_of_portfolios/2)), eigenvalues_antisymmetric, 'k.-')
+    axs[2, 0].set_title('Panel C. Π^a Eigenvalues')
+    axs[2, 0].set_xlabel('Eigenvalue Number')
+    axs[2, 0].set_ylabel('Eigenvalue (λ)')
+
+    # Panel D: PP Average Returns
+    axs[0, 1].plot(x, pp_returns, 'k.-')
+    axs[0, 1].set_title('Panel D. PP Average Returns')
+    axs[0, 1].set_xlabel('Eigenvalue Number')
+    axs[0, 1].set_ylabel('PP Returns (%)')
+
+    # Panel E: PEP Average Returns
+    axs[1, 1].plot(x, pep_returns, 'k.-')
+    axs[1, 1].set_title('Panel E. PEP Average Returns')
+    axs[1, 1].set_xlabel('Eigenvalue Number')
+    axs[1, 1].set_ylabel('PEP Returns (%)')
+
+    # Panel F: PAP Average Returns
+    axs[2, 1].plot(np.arange(1, int(number_of_portfolios/2)), pap_returns, 'k.-')
+    axs[2, 1].set_title('Panel F. PAP Average Returns')
+    axs[2, 1].set_xlabel('Eigenvalue Number')
+    axs[2, 1].set_ylabel('PAP Returns (%)')
+
+    for ax in axs.flat:
+        ax.yaxis.set_major_locator(MultipleLocator(0.1)) 
+
+    # Add a title for the entire figure
+    fig.suptitle(title, fontsize=16)
+
+    # Adjust layout
+    plt.tight_layout()
+    plt.show()
