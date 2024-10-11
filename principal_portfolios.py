@@ -597,3 +597,35 @@ def build_signal_df_for_1month_momentum(df):
     # Note that I shift signals one period forward to make computations easier. 
     signal_df= signal_df.join(df.iloc[:, 1:].shift(1))
     return signal_df
+
+def calculate_fx_carry_signal(spot: pd.DataFrame, futures: pd.DataFrame) -> pd.DataFrame:
+    # Create a copy of x and y
+    spot_copy = spot.copy()
+    futures_copy = futures.copy()
+    
+    # Ensure the date column is in datetime format for both dataframes
+    spot_copy['date'] = pd.to_datetime(spot_copy['date'])
+    futures_copy['date'] = pd.to_datetime(futures_copy['date'])
+    
+    
+    # Calculate log returns for every column except the 'date' column
+    carry_df = pd.DataFrame()
+    carry_df['date'] = spot_copy['date']  # Preserve the date column
+    
+    for column in spot_copy.columns:
+        if column != 'date':
+            # Ensure we handle cases where the data is non-numeric or NaN
+            x_numeric = pd.to_numeric(spot_copy[column], errors='coerce')
+            y_numeric = pd.to_numeric(futures_copy[column], errors='coerce')
+            
+            # Apply log transformation only to positive values, ignore others (e.g., NaN or non-positive values)
+            carry_df[column] = (x_numeric - y_numeric) * 100
+    
+    # Reset the index and ensure index is as a normal column
+    carry_df.reset_index(drop=True, inplace=True)
+    signal_df = pd.DataFrame()
+    signal_df["date"] = carry_df["date"]
+    # Note that I shift signals one period forward to make computations easier. 
+    signal_df= signal_df.join(carry_df.iloc[:, 1:].shift(1))
+    return signal_df
+    
