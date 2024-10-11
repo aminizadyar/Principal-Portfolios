@@ -173,13 +173,21 @@ def calculate_sharpe_ratio(returns):
     
     return sharpe_ratio
 
-def filter_dataframes_by_common_dates(df1, df2):
+def filter_dataframes_by_common_dates(df1, df2, is_date_index=True):
     # Find common dates (intersection of index values)
-    common_dates = df1.index.intersection(df2.index)
+    if is_date_index:
+        common_dates = df1.index.intersection(df2.index)
+        
+        # Filter both dataframes to keep only the rows with the common dates
+        df1_filtered = df1.loc[common_dates]
+        df2_filtered = df2.loc[common_dates]
     
-    # Filter both dataframes to keep only the rows with the common dates
-    df1_filtered = df1.loc[common_dates]
-    df2_filtered = df2.loc[common_dates]
+    else:
+        common_dates = set(df1['date']).intersection(set(df2['date']))
+
+        # Filter both DataFrames
+        df1_filtered = df1[df1['date'].isin(common_dates)]
+        df2_filtered = df2[df2['date'].isin(common_dates)]
     
     return df1_filtered, df2_filtered
 
@@ -236,6 +244,8 @@ def build_PP(portfolios_dataset_df, signal_df, number_of_lookback_periods,
     # Other columns of these dataframes are percentage returns.
     # portfolios_dataset_df and signal_df must have the same columns.
     '''
+
+    portfolios_dataset_df,signal_df = filter_dataframes_by_common_dates(portfolios_dataset_df.dropna(), signal_df.dropna(), is_date_index=False)
 
     # I can think of this matrix as $S_{t-1}$.
     normalized_signal_df = rank_and_map(signal_df)
