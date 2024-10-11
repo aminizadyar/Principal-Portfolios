@@ -527,7 +527,7 @@ def invert_usd_columns(df):
 def convert_date_column_for_monthly_data(df):
     return pd.to_datetime(df['date'], format='%Y%m') + pd.offsets.MonthEnd(1)
 
-
+# I no longer use this function. I will delete it.
 def calculate_log_returns(df):
     # Ensure the 'date' column is excluded from log return calculation
     df_numeric = df.drop(columns=['date'])
@@ -542,3 +542,41 @@ def calculate_log_returns(df):
     log_returns = log_returns.dropna().reset_index(drop=True)
     
     return log_returns
+
+# Note that this function can be used to calculate simple(non-excess) returns too. Just set x=y.
+def calculate_log_FX_excess_returns(x: pd.DataFrame, y: pd.DataFrame) -> pd.DataFrame:
+    # Create a copy of x and y
+    x_copy = x.copy()
+    y_copy = y.copy()
+    
+    # Ensure the date column is in datetime format for both dataframes
+    x_copy['date'] = pd.to_datetime(x_copy['date'])
+    y_copy['date'] = pd.to_datetime(y_copy['date'])
+    
+    # Shift the Y dataframe by 1 to align Y_t-1 with X_t
+    y_shifted = y_copy.shift(1)
+    
+    # Calculate log returns for every column except the 'date' column
+    log_return_df = pd.DataFrame()
+    log_return_df['date'] = x_copy['date']  # Preserve the date column
+    
+    for column in x_copy.columns:
+        if column != 'date':
+            # Ensure we handle cases where the data is non-numeric or NaN
+            x_numeric = pd.to_numeric(x_copy[column], errors='coerce')
+            y_numeric = pd.to_numeric(y_shifted[column], errors='coerce')
+            
+            # Apply log transformation only to positive values, ignore others (e.g., NaN or non-positive values)
+            log_return_df[column] = (np.log(x_numeric) - np.log(y_numeric)) * 100
+    
+    # Reset the index and ensure index is as a normal column
+    log_return_df.reset_index(drop=True, inplace=True)
+    
+    return log_return_df
+
+def build_signal_df_for_1month_momentum(df):
+    signal_df = pd.DataFrame()
+    signal_df["date"] = df["date"]
+    # Note that I shift signals one period forward to make computations easier. 
+    signal_df= signal_df.join(df.iloc[:, 1:].shift(1))
+    return signal_df
