@@ -233,30 +233,37 @@ def regression_results(X, Y):
 
 
 
-def build_PP(portfolios_dataset_df, signal_df, number_of_lookback_periods,
-            starting_year_to_filter, end_year_to_filter,
+def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
+            starting_year_to_filter, end_year_to_filter, portfolio_formation_df = None,
             factor_data_monthly=None, number_of_PPs_to_consider = 3,
             number_of_PEPs_to_consider = 3, number_of_PAPs_to_consider = 3,
             use_demeaned_returns = True):
     
     '''
-    # Here portfolios_dataset_df, signal_df and factor_data_monthly have a column named 'date'.
+    # Here input_return_dataset_df, signal_df, portfolio_formation_df and factor_data_monthly have a column named 'date'.
     # Other columns of these dataframes are percentage returns.
-    # portfolios_dataset_df and signal_df must have the same columns.
+    # input_return_dataset_df, signal_df and portfolio_formation_df must have the same columns.
+    # input_return_dataset_df is used to calculate the prediction matrix. It can be excess returns or simple returns.
+    # portfolio_formation_df is used for portfolio formation.
+    # One can use excess returns to get portfolio weights, but use simple returns to measure performance.
+    # This is why these two variables are seperated. If there is not input for portfolio_formation_df, the code assumes that it is the same as input_return_dataset_df.
     '''
+    # If portfolio_formation_df is not provided, use input_return_dataset_df
+    if portfolio_formation_df is None:
+        portfolio_formation_df = input_return_dataset_df
 
-    portfolios_dataset_df,signal_df = filter_dataframes_by_common_dates(portfolios_dataset_df.dropna(), signal_df.dropna(), is_date_index=False)
+    input_return_dataset_df,signal_df = filter_dataframes_by_common_dates(input_return_dataset_df.dropna(), signal_df.dropna(), is_date_index=False)
 
     # I can think of this matrix as $S_{t-1}$.
     normalized_signal_df = rank_and_map(signal_df)
     normalized_signal_df = normalized_signal_df[(normalized_signal_df['date'].dt.year > starting_year_to_filter) & (normalized_signal_df['date'].dt.year < end_year_to_filter)].reset_index(drop=True)
     
-    portfolios_dataset_df = portfolios_dataset_df[(portfolios_dataset_df['date'].dt.year > starting_year_to_filter) & (portfolios_dataset_df['date'].dt.year < end_year_to_filter)].reset_index(drop=True)
+    input_return_dataset_df = input_return_dataset_df[(input_return_dataset_df['date'].dt.year > starting_year_to_filter) & (input_return_dataset_df['date'].dt.year < end_year_to_filter)].reset_index(drop=True)
     # This matrix can be denoted as $R_{t-1}$
     if use_demeaned_returns == True:
-        return_matrix_df = cross_sectional_demean(portfolios_dataset_df)
+        return_matrix_df = cross_sectional_demean(input_return_dataset_df)
     else:
-        return_matrix_df = portfolios_dataset_df.copy()
+        return_matrix_df = input_return_dataset_df.copy()
     
     # This gives: $R_{t}S'_{t}$
     rs_matrix = compute_rs_product(return_matrix_df, normalized_signal_df)
@@ -313,11 +320,11 @@ def build_PP(portfolios_dataset_df, signal_df, number_of_lookback_periods,
         signal_vector = normalized_signal_df[normalized_signal_df.date == date_to_consider].values[0, 1:].reshape(1, -1)  # 1*n matrix
         '''
         There is no difference between using demeaned returns or not_demeaned ones.
-        I can replace portfolios_dataset_df with return_matrix_df.
+        I can replace input_return_dataset_df with return_matrix_df.
         This is because I am forming long-short portfolios.
         The size of the long position is the same as the short position. So, the mean will cancell out.
         '''
-        return_vector = portfolios_dataset_df[portfolios_dataset_df.date == date_to_consider].values[0, 1:].reshape(-1, 1)  # n*1 matrix
+        return_vector = portfolio_formation_df[portfolio_formation_df.date == date_to_consider].values[0, 1:].reshape(-1, 1)  # n*1 matrix
 
         # Compute realized returns
         return_of_simple_factor = (signal_vector @ return_vector)[0][0]
