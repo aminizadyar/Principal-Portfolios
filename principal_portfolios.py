@@ -27,6 +27,27 @@ def rank_and_map(df):
     df_copy[data_columns] = df_copy[data_columns].apply(rank_row, axis=1)
     return df_copy
 
+# I am not using this function for now.
+def rank_and_map_compressed(df, scale_factor=5):
+    # Make a copy to avoid modifying the original DataFrame
+    df_copy = df.copy()
+    # Exclude the 'date' column for ranking
+    data_columns = df_copy.columns[1:]
+    
+    # Apply ranking and non-linear scaling row-wise (for each date)
+    def rank_row(row):
+        # Get the ranks (min rank is 1)
+        ranks = row.rank(method='min')
+        # Normalize the ranks to range between 0 and 1
+        ranks_normalized = (ranks - 1) / (len(row) - 1)
+        # Apply tanh scaling and map to range [-0.5, 0.5]
+        mapped_ranks = np.tanh((ranks_normalized - 0.5) * scale_factor) / 2  # Adjust scale_factor
+        
+        return mapped_ranks
+    
+    # Apply rank_row function to each row, excluding the 'date' column
+    df_copy[data_columns] = df_copy[data_columns].apply(rank_row, axis=1)
+    return df_copy
 
 def cross_sectional_demean(df):
     # Make a copy to avoid modifying the original DataFrame
@@ -257,7 +278,6 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
     # I can think of this matrix as $S_{t-1}$.
     normalized_signal_df = rank_and_map(signal_df)
     normalized_signal_df = normalized_signal_df[(normalized_signal_df['date'].dt.year > starting_year_to_filter) & (normalized_signal_df['date'].dt.year < end_year_to_filter)].reset_index(drop=True)
-    
     input_return_dataset_df = input_return_dataset_df[(input_return_dataset_df['date'].dt.year > starting_year_to_filter) & (input_return_dataset_df['date'].dt.year < end_year_to_filter)].reset_index(drop=True)
     # This matrix can be denoted as $R_{t-1}$
     if use_demeaned_returns == True:
