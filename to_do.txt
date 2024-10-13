@@ -1,8 +1,0 @@
-What to do next:
-1- The performance of the new approach completely depends on the signal you use. It won't guarantee that you will get awesome results on any gives signals. (However, I find that if the signal comes from a factor, PEP's will generally be good and if it is not a factor but the signal makes economics sense, PAP's will generally be good). So, the best approach to go forward is to use as many signals as possible. And show that if you follow a basic procedure like PP and get an equal weighted average over constructed portfolios, you can earn a good sharp ratio (using simple factor as benchmark).
-
-- There is a variant of PEP in which where the expected return is negative, I take a short position. (just the negative of position matrix)
-
-- I can develop a python package for Principal Portfolios.
-
-- I can take an average of Principal portfolios across signals. I believe it will greatly improve the sharp ratio. Moreover, I can use some ML algo to tune the weight of each portfolio.

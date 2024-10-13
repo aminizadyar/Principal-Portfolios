@@ -648,4 +648,18 @@ def calculate_fx_carry_signal(spot: pd.DataFrame, futures: pd.DataFrame) -> pd.D
     # Note that I shift signals one period forward to make computations easier. 
     signal_df= signal_df.join(carry_df.iloc[:, 1:].shift(1))
     return signal_df
+
+def compute_period_returns(df, periods):
+    # Ensure 'date' column is kept intact
+    date_column = df['date']
     
+    # Columns to compute percentage change for
+    columns_to_calculate = df.columns.difference(['date'])
+    
+    # Calculate the percentage change over the specified number of periods
+    returns_df = df[columns_to_calculate].pct_change(periods=periods)
+    
+    # Add the 'date' column back into the DataFrame
+    returns_df.insert(0, 'date', date_column)
+    
+    return returns_df
