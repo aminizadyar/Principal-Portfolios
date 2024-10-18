@@ -428,6 +428,7 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
         # Append the row to the dataframe
         realized_returns_df.loc[len(realized_returns_df)] = row_values
 
+    realized_returns_df = find_factor_returns_expected_sign(realized_returns_df)
     realized_returns_df = realized_returns_df.set_index("date")
 
     pap_std = realized_returns_df['realized_return_of_first_n_PAP'].std()
@@ -548,6 +549,17 @@ def singular_values_vs_realized_returns_graph(output_dict,portfolios_key,number_
     plt.tight_layout()
     plt.show()
 
+def find_factor_returns_expected_sign(df, factor_column='return_of_simple_factor'):
+    # Calculate the sign of the mean of the 'return_of_simple_factor' column
+    sign_mean = np.sign(df['return_of_simple_factor'].mean())
+    
+    # Select columns that contain 'PP' or 'PEP' but do not contain 'expected'
+    selected_columns = [col for col in df.columns if ('PP' in col or 'PEP' in col) and 'expected' not in col]
+    
+    # Multiply the selected columns by the sign of the mean
+    df[selected_columns] = df[selected_columns].apply(lambda x: x * sign_mean)
+            
+    return df
 
 def invert_usd_columns(df):
     # Identify columns where 'Base' is USD in the first row
