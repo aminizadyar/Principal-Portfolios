@@ -297,7 +297,7 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
     I formed the matrix this way in order to make the calculations easier.
     """
 
-    print(find_factor_returns_expected_sign_2(return_matrix_df,normalized_signal_df,portfolio_formation_df,number_of_lookback_periods))
+    #print(find_factor_returns_expected_sign_2(return_matrix_df,normalized_signal_df,portfolio_formation_df,number_of_lookback_periods))
 
     realized_returns_df = pd.DataFrame(columns=[
         "date",
@@ -347,13 +347,15 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
         The size of the long position is the same as the short position. So, the mean will cancell out.
         '''
         return_vector = portfolio_formation_df[portfolio_formation_df.date == date_to_consider].values[0, 1:].reshape(-1, 1)  # n*1 matrix
+        
+        #simple_factor_expected_sign = find_factor_returns_expected_sign_3(normalized_signal_df,portfolio_formation_df,date_to_consider)
 
         # Compute realized returns
         return_of_simple_factor = (signal_vector @ return_vector)[0][0]
         realized_return_of_first_n_PP = (signal_vector @ first_n_PPs_position_matrix(U, VT, number_of_PPs_to_consider) @ return_vector)[0][0]
         expected_return_of_first_n_PP = first_n_PPs_expected_return(S, number_of_PPs_to_consider)
         realized_return_of_first_n_PEP = (signal_vector @ first_n_PEPs_position_matrix(eigenvectors,number_of_PEPs_to_consider) @ return_vector)[0][0]
-        expected_return_of_first_n_PEP = first_n_PEPs_expected_return(eigenvalues, number_of_PEPs_to_consider)
+        expected_return_of_first_n_PEP = first_n_PEPs_expected_return(eigenvalues, number_of_PEPs_to_consider) 
         realized_return_of_first_n_PAP = (signal_vector @ first_n_PAPs_position_matrix(sorted_eigenvectors_ta_real_part,sorted_eigenvectors_ta_imaginary_part,number_of_PAPs_to_consider) @ return_vector)[0][0]
         expected_return_of_first_n_PAP = first_n_PAPs_expected_return(filtered_eigenvalues_ta, number_of_PAPs_to_consider)
         
@@ -571,7 +573,7 @@ def find_factor_returns_expected_sign_2(return_matrix_df,normalized_signal_df,po
         "return_of_simple_factor", 
     ])
 
-    for date_index in return_matrix_df.iloc[number_of_lookback_periods-12:number_of_lookback_periods]['date']:
+    for date_index in return_matrix_df.iloc[number_of_lookback_periods-24:number_of_lookback_periods]['date']:
         date_to_consider = pd.Timestamp(date_index)
         signal_vector = normalized_signal_df[normalized_signal_df.date == date_to_consider].values[0, 1:].reshape(1, -1)  # 1*n matrix
         return_vector = portfolio_formation_df[portfolio_formation_df.date == date_to_consider].values[0, 1:].reshape(-1, 1)  # n*1 matrix
@@ -580,5 +582,24 @@ def find_factor_returns_expected_sign_2(return_matrix_df,normalized_signal_df,po
 
         realized_returns_df.loc[len(realized_returns_df)] = row_values
 
-    shrp = calculate_sharpe_ratio(realized_returns_df['return_of_simple_factor'])
-    return shrp
+    sign_mean = np.sign(realized_returns_df['return_of_simple_factor'].mean())
+    return sign_mean
+
+
+def find_factor_returns_expected_sign_3(normalized_signal_df,portfolio_formation_df,date_to_consider,rolling_periods=60):
+    realized_returns_df = pd.DataFrame(columns=[
+        "date",
+        "return_of_simple_factor", 
+    ])
+    index_value = normalized_signal_df[normalized_signal_df['date'] == date_to_consider].index[0]
+
+    for idx in range(index_value-rolling_periods,index_value):
+        signal_vector = normalized_signal_df[normalized_signal_df.index == idx].values[0, 1:].reshape(1, -1)  # 1*n matrix
+        return_vector = portfolio_formation_df[portfolio_formation_df.index == idx].values[0, 1:].reshape(-1, 1)  # n*1 matrix
+        return_of_simple_factor = (signal_vector @ return_vector)[0][0]
+        row_values = [idx, return_of_simple_factor]
+
+        realized_returns_df.loc[len(realized_returns_df)] = row_values
+
+    sign_mean = np.sign(realized_returns_df['return_of_simple_factor'].mean())
+    return sign_mean
