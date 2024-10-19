@@ -297,6 +297,8 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
     I formed the matrix this way in order to make the calculations easier.
     """
 
+    print(find_factor_returns_expected_sign_2(return_matrix_df,normalized_signal_df,portfolio_formation_df,number_of_lookback_periods))
+
     realized_returns_df = pd.DataFrame(columns=[
         "date",
         "return_of_simple_factor", 
@@ -561,3 +563,22 @@ def find_factor_returns_expected_sign(df, factor_column='return_of_simple_factor
     df[selected_columns] = df[selected_columns].apply(lambda x: x * sign_mean)
             
     return df
+
+
+def find_factor_returns_expected_sign_2(return_matrix_df,normalized_signal_df,portfolio_formation_df,number_of_lookback_periods):
+    realized_returns_df = pd.DataFrame(columns=[
+        "date",
+        "return_of_simple_factor", 
+    ])
+
+    for date_index in return_matrix_df.iloc[number_of_lookback_periods-12:number_of_lookback_periods]['date']:
+        date_to_consider = pd.Timestamp(date_index)
+        signal_vector = normalized_signal_df[normalized_signal_df.date == date_to_consider].values[0, 1:].reshape(1, -1)  # 1*n matrix
+        return_vector = portfolio_formation_df[portfolio_formation_df.date == date_to_consider].values[0, 1:].reshape(-1, 1)  # n*1 matrix
+        return_of_simple_factor = (signal_vector @ return_vector)[0][0]
+        row_values = [date_index, return_of_simple_factor]
+
+        realized_returns_df.loc[len(realized_returns_df)] = row_values
+
+    shrp = calculate_sharpe_ratio(realized_returns_df['return_of_simple_factor'])
+    return shrp
