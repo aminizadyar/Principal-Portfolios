@@ -114,6 +114,53 @@ def get_prediction_matrix(input_date, result_matrices, n_periods):
     average_matrix = sum_matrix / len(selected_dates)
     return average_matrix
 
+# this function is not used. I had an idea of estimating the prediction matrix more robustly and this is the implementation.
+def get_prediction_matrix_robust(input_date, result_matrices, n_periods):
+    # Sort the dates in result_matrices to ensure they're in order
+    sorted_dates = sorted(result_matrices.keys())
+    
+    # Find the index of the input date in the sorted list of dates
+    if input_date not in sorted_dates:
+        raise ValueError("The input date is not found in the result_matrices.")
+    
+    input_date_index = sorted_dates.index(input_date)
+    
+    # Select the last n_periods (excluding the input date)
+    start_index = max(0, input_date_index - n_periods)  # Ensure we don't go below index 0
+    selected_dates = sorted_dates[start_index:input_date_index]
+    
+    if len(selected_dates) == 0:
+        raise ValueError(f"There are no previous periods to calculate the average for the given number: {n_periods}.")
+    
+    # Initialize matrices to accumulate the sum and sum of squares
+    matrix_shape = result_matrices[sorted_dates[0]].shape
+    sum_matrix = np.zeros(matrix_shape, dtype=float)
+    sum_squared_matrix = np.zeros(matrix_shape, dtype=float)
+    
+    # Sum all the selected matrices and their squares
+    for date in selected_dates:
+        matrix = np.array(result_matrices[date], dtype=float)
+        sum_matrix += matrix
+        sum_squared_matrix += matrix ** 2
+    
+    # Calculate the element-wise average
+    average_matrix = sum_matrix / len(selected_dates)
+    
+    # Calculate the element-wise variance: Var(X) = E(X^2) - E(X)^2
+    variance_matrix = (sum_squared_matrix / len(selected_dates)) - (average_matrix ** 2)
+    
+    # Calculate the standard deviation: std(X) = sqrt(Var(X))
+    std_dev_matrix = np.sqrt(variance_matrix)
+    
+    # Handle the case where the standard deviation is zero to avoid division by zero
+    # You can set those entries to a specific value (e.g., np.inf or 0)
+    std_dev_matrix[std_dev_matrix == 0] = np.inf  # Prevent division by zero
+    
+    # Calculate the element-wise average divided by the standard deviation
+    result_matrix = average_matrix / std_dev_matrix
+    
+    return result_matrix
+
 
 # i should start from 0. In other words, to get the first PP's expected return you must set i=0.
 def get_ith_PPs_expected_return(S,i):
@@ -297,7 +344,6 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
     I formed the matrix this way in order to make the calculations easier.
     """
 
-    #print(find_factor_returns_expected_sign_2(return_matrix_df,normalized_signal_df,portfolio_formation_df,number_of_lookback_periods))
 
     realized_returns_df = pd.DataFrame(columns=[
         "date",
@@ -348,7 +394,6 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
         '''
         return_vector = portfolio_formation_df[portfolio_formation_df.date == date_to_consider].values[0, 1:].reshape(-1, 1)  # n*1 matrix
         
-        #simple_factor_expected_sign = find_factor_returns_expected_sign_3(normalized_signal_df,portfolio_formation_df,date_to_consider)
 
         # Compute realized returns
         return_of_simple_factor = (signal_vector @ return_vector)[0][0]
@@ -492,6 +537,18 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
             output_dict[result_name] = regression_results(X,Y)
     return output_dict  
 
+def find_factor_returns_expected_sign(df, factor_column='return_of_simple_factor'):
+    # Calculate the sign of the mean of the 'return_of_simple_factor' column
+    sign_mean = np.sign(df['return_of_simple_factor'].mean())
+    
+    # Select columns that contain 'PP' or 'PEP' but do not contain 'expected'
+    selected_columns = [col for col in df.columns if ('PP' in col or 'PEP' in col) and 'expected' not in col]
+    
+    # Multiply the selected columns by the sign of the mean
+    df[selected_columns] = df[selected_columns].apply(lambda x: x * sign_mean)
+            
+    return df
+
 
 def singular_values_vs_realized_returns_graph(output_dict,portfolios_key,number_of_portfolios,title):
 
@@ -554,19 +611,8 @@ def singular_values_vs_realized_returns_graph(output_dict,portfolios_key,number_
     plt.show()
     
 
-def find_factor_returns_expected_sign(df, factor_column='return_of_simple_factor'):
-    # Calculate the sign of the mean of the 'return_of_simple_factor' column
-    sign_mean = np.sign(df['return_of_simple_factor'].mean())
-    
-    # Select columns that contain 'PP' or 'PEP' but do not contain 'expected'
-    selected_columns = [col for col in df.columns if ('PP' in col or 'PEP' in col) and 'expected' not in col]
-    
-    # Multiply the selected columns by the sign of the mean
-    df[selected_columns] = df[selected_columns].apply(lambda x: x * sign_mean)
-            
-    return df
 
-
+#this function is not used. it is just for testing purposes and will be deleted.
 def find_factor_returns_expected_sign_2(return_matrix_df,normalized_signal_df,portfolio_formation_df,number_of_lookback_periods):
     realized_returns_df = pd.DataFrame(columns=[
         "date",
@@ -585,7 +631,7 @@ def find_factor_returns_expected_sign_2(return_matrix_df,normalized_signal_df,po
     sign_mean = np.sign(realized_returns_df['return_of_simple_factor'].mean())
     return sign_mean
 
-
+#this function is not used. it is just for testing purposes and will be deleted.
 def find_factor_returns_expected_sign_3(normalized_signal_df,portfolio_formation_df,date_to_consider,rolling_periods=60):
     realized_returns_df = pd.DataFrame(columns=[
         "date",
