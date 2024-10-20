@@ -493,6 +493,7 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
     realized_returns_df = find_factor_returns_expected_sign(realized_returns_df)
     realized_returns_df = realized_returns_df.set_index("date")
 
+
     pap_std = realized_returns_df['realized_return_of_first_n_PAP'].std()
     pep_std = realized_returns_df['realized_return_of_first_n_PEP'].std()
     realized_returns_df['adjusted_PAP'] = realized_returns_df['realized_return_of_first_n_PAP'] * (pep_std / pap_std)
@@ -500,6 +501,10 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
     realized_returns_df['PEP and PAP 1-n'] = (realized_returns_df['adjusted_PAP'] + realized_returns_df['realized_return_of_first_n_PEP']) / 2
     # drop the adjusted column.
     realized_returns_df.drop(columns='adjusted_PAP', inplace=True)
+
+
+    realized_returns_df['long-short PEP and PAP 1-n'] = 0.5 * (realized_returns_df['realized_return_of_first_n_PAP'] + realized_returns_df["long_short_realized_PEP"])
+
 
     sharpe_df = realized_returns_df.drop(realized_returns_df.filter(like="expected").columns, axis=1).apply(lambda col: calculate_sharpe_ratio(col)) * math.sqrt(12)
 
