@@ -207,6 +207,13 @@ def first_n_PEPs_position_matrix(eigenvectors,number_of_PEPs):
         sum_matrix += get_ith_symmetric_position_matrix(eigenvectors,i)
     return sum_matrix/number_of_PEPs
 
+def last_n_PEPs_position_matrix(eigenvectors,number_of_PEPs):
+    matrix_shape = eigenvectors.shape
+    sum_matrix = np.zeros(matrix_shape, dtype=float)
+    for i in range(number_of_PEPs):
+        sum_matrix += get_ith_symmetric_position_matrix(eigenvectors,matrix_shape[0]-i-1)
+    return sum_matrix/number_of_PEPs
+
 # i should start from 0. In other words, to get the first PEP you must set i=0.
 def get_ith_PAPs_expected_return(filtered_eigenvalues_ta,i):
     return 2 * filtered_eigenvalues_ta[i]
@@ -351,6 +358,8 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
         "realized_return_of_first_n_PP", 
         "expected_return_of_first_n_PP",
         "realized_return_of_first_n_PEP",
+        "realized_return_of_last_n_PEP",
+        'long_short_realized_PEP',
         "expected_return_of_first_n_PEP",
         "realized_return_of_first_n_PAP",
         "expected_return_of_first_n_PAP"
@@ -400,6 +409,8 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
         realized_return_of_first_n_PP = (signal_vector @ first_n_PPs_position_matrix(U, VT, number_of_PPs_to_consider) @ return_vector)[0][0]
         expected_return_of_first_n_PP = first_n_PPs_expected_return(S, number_of_PPs_to_consider)
         realized_return_of_first_n_PEP = (signal_vector @ first_n_PEPs_position_matrix(eigenvectors,number_of_PEPs_to_consider) @ return_vector)[0][0]
+        realized_return_of_last_n_PEP = (signal_vector @ last_n_PEPs_position_matrix(eigenvectors,number_of_PEPs_to_consider) @ return_vector)[0][0]
+        long_short_realized_PEP = realized_return_of_first_n_PEP - realized_return_of_last_n_PEP
         expected_return_of_first_n_PEP = first_n_PEPs_expected_return(eigenvalues, number_of_PEPs_to_consider) 
         realized_return_of_first_n_PAP = (signal_vector @ first_n_PAPs_position_matrix(sorted_eigenvectors_ta_real_part,sorted_eigenvectors_ta_imaginary_part,number_of_PAPs_to_consider) @ return_vector)[0][0]
         expected_return_of_first_n_PAP = first_n_PAPs_expected_return(filtered_eigenvalues_ta, number_of_PAPs_to_consider)
@@ -412,6 +423,8 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
             realized_return_of_first_n_PP, 
             expected_return_of_first_n_PP,
             realized_return_of_first_n_PEP,
+            realized_return_of_last_n_PEP,
+            long_short_realized_PEP,
             expected_return_of_first_n_PEP,
             realized_return_of_first_n_PAP,
             expected_return_of_first_n_PAP
@@ -557,7 +570,8 @@ def singular_values_vs_realized_returns_graph(output_dict,portfolios_key,number_
     eigenvalues_symmetric = output_dict[portfolios_key]["pep_expected_mean_df"][1:].values
     eigenvalues_antisymmetric = output_dict[portfolios_key]["pap_expected_mean_df"][1:].values
     pp_returns = output_dict[portfolios_key]["pp_realized_mean_df"][1:].values
-    pep_returns = output_dict[portfolios_key]["pep_realized_mean_df"][1:].values
+    # the below line starts from 3 because the first 3 elements are the first and last n PEP's and long-short PEP.
+    pep_returns = output_dict[portfolios_key]["pep_realized_mean_df"][3:].values
     pap_returns = output_dict[portfolios_key]["pap_realized_mean_df"][1:].values
 
     plt.rcParams['axes.grid'] = True
