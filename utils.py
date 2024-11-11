@@ -158,14 +158,14 @@ def construct_monthly_return_FX_portfolios_datasets(df):
     return monthly_returns
 
 
-def exclude_redundant_columns_FX_portfolios_datasets(df):
+def exclude_redundant_columns_FX_portfolios_datasets(df,corr=0.98):
     corr_matrix = df.iloc[:,1:].corr()
     to_drop = []
 
     # Iterate over the columns of the correlation matrix
     for i in range(len(corr_matrix.columns)):
         for j in range(i + 1, len(corr_matrix.columns)):
-            if corr_matrix.iloc[i, j] > 0.98 or corr_matrix.iloc[i, j] < -0.98:
+            if corr_matrix.iloc[i, j] > corr or corr_matrix.iloc[i, j] < -1*corr:
                 colname = corr_matrix.columns[j]
                 if colname not in to_drop:
                     to_drop.append(colname)
