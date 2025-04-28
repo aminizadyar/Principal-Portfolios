@@ -490,7 +490,7 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
         # Append the row to the dataframe
         realized_returns_df.loc[len(realized_returns_df)] = row_values
 
-    realized_returns_df = find_factor_returns_expected_sign(realized_returns_df)
+    #realized_returns_df = find_factor_returns_expected_sign(realized_returns_df)          ### Only for testing.
     realized_returns_df = realized_returns_df.set_index("date")
 
 
@@ -555,6 +555,13 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
             output_dict[result_name] = regression_results(X,Y)
     return output_dict  
 
+
+
+"""
+This function is not part of the baseline implementation. 
+If the signal being used is so bad that a simple factor based on that generates negative returns, the PP methodology will break and a function like this is needed to get the correct sign of the average return. 
+The implementation I have here is completely subject to look-ahead bias and only for showcasing the idea.
+"""
 def find_factor_returns_expected_sign(df, factor_column='return_of_simple_factor'):
     # Calculate the sign of the mean of the 'return_of_simple_factor' column
     sign_mean = np.sign(df['return_of_simple_factor'].mean())
