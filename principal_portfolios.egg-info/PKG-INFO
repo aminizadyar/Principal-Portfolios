@@ -1,0 +1,47 @@
+Metadata-Version: 2.4
+Name: principal_portfolios
+Version: 1.0.5
+Summary: A Python implementation of the Principal Portfolios methodology by Kelly, Malamud, and Pedersen (2023), enabling optimal asset allocation by exploiting cross-predictability among asset returns.
+Home-page: https://github.com/aminizadyar/Principal-Portfolios
+Author: Amin Izadyar
+Author-email: a.izadyar23@imperial.ac.uk
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: requires-python
+Dynamic: summary
+
+# principal_portfolios
+
+A Python package implementing the **Principal Portfolios** methodology introduced by Kelly, Malamud, and Pedersen (2023), *The Journal of Finance*.
+
+## Overview
+
+This package provides tools for constructing and analyzing **Principal Portfolios**â€”linear trading strategies derived from the singular value decomposition (SVD) of the **prediction matrix** that captures both own-asset and cross-asset predictive signals.
+
+Key components include:
+
+- Construction of the prediction matrix from asset returns and signals
+- Decomposition into:
+  - **Principal Portfolios (PPs)**: timeable portfolios ordered by predictability
+  - **Principal Exposure Portfolios (PEPs)**: factor-exposed strategies (beta)
+  - **Principal Alpha Portfolios (PAPs)**: factor-neutral strategies (alpha)
+
+## Reference
+
+Kelly, B., Malamud, S., & Pedersen, L. H. (2023). [*Principal Portfolios*](https://doi.org/10.1111/jofi.13199). *The Journal of Finance*, 78(1), 347â€“392.
+
+## Installation
+
+After uploading to PyPI, install via:
+
+```bash
+pip install principal_portfolios

@@ -27,27 +27,6 @@ def rank_and_map(df):
     df_copy[data_columns] = df_copy[data_columns].apply(rank_row, axis=1)
     return df_copy
 
-# I am not using this function for now.
-def rank_and_map_compressed(df, scale_factor=5):
-    # Make a copy to avoid modifying the original DataFrame
-    df_copy = df.copy()
-    # Exclude the 'date' column for ranking
-    data_columns = df_copy.columns[1:]
-    
-    # Apply ranking and non-linear scaling row-wise (for each date)
-    def rank_row(row):
-        # Get the ranks (min rank is 1)
-        ranks = row.rank(method='min')
-        # Normalize the ranks to range between 0 and 1
-        ranks_normalized = (ranks - 1) / (len(row) - 1)
-        # Apply tanh scaling and map to range [-0.5, 0.5]
-        mapped_ranks = np.tanh((ranks_normalized - 0.5) * scale_factor) / 2  # Adjust scale_factor
-        
-        return mapped_ranks
-    
-    # Apply rank_row function to each row, excluding the 'date' column
-    df_copy[data_columns] = df_copy[data_columns].apply(rank_row, axis=1)
-    return df_copy
 
 def cross_sectional_demean(df):
     # Make a copy to avoid modifying the original DataFrame
@@ -94,7 +73,7 @@ def get_prediction_matrix(input_date, result_matrices, n_periods):
     # Find the index of the input date in the sorted list of dates
     if input_date not in sorted_dates:
         raise ValueError("The input date is not found in the result_matrices.")
-    
+
     input_date_index = sorted_dates.index(input_date)
     # Select the last n_periods (excluding the input date)
     start_index = max(0, input_date_index - n_periods)  # Ensure we don't go below index 0
@@ -114,53 +93,6 @@ def get_prediction_matrix(input_date, result_matrices, n_periods):
     average_matrix = sum_matrix / len(selected_dates)
     return average_matrix
 
-# this function is not used. I had an idea of estimating the prediction matrix more robustly and this is the implementation.
-def get_prediction_matrix_robust(input_date, result_matrices, n_periods):
-    # Sort the dates in result_matrices to ensure they're in order
-    sorted_dates = sorted(result_matrices.keys())
-    
-    # Find the index of the input date in the sorted list of dates
-    if input_date not in sorted_dates:
-        raise ValueError("The input date is not found in the result_matrices.")
-    
-    input_date_index = sorted_dates.index(input_date)
-    
-    # Select the last n_periods (excluding the input date)
-    start_index = max(0, input_date_index - n_periods)  # Ensure we don't go below index 0
-    selected_dates = sorted_dates[start_index:input_date_index]
-    
-    if len(selected_dates) == 0:
-        raise ValueError(f"There are no previous periods to calculate the average for the given number: {n_periods}.")
-    
-    # Initialize matrices to accumulate the sum and sum of squares
-    matrix_shape = result_matrices[sorted_dates[0]].shape
-    sum_matrix = np.zeros(matrix_shape, dtype=float)
-    sum_squared_matrix = np.zeros(matrix_shape, dtype=float)
-    
-    # Sum all the selected matrices and their squares
-    for date in selected_dates:
-        matrix = np.array(result_matrices[date], dtype=float)
-        sum_matrix += matrix
-        sum_squared_matrix += matrix ** 2
-    
-    # Calculate the element-wise average
-    average_matrix = sum_matrix / len(selected_dates)
-    
-    # Calculate the element-wise variance: Var(X) = E(X^2) - E(X)^2
-    variance_matrix = (sum_squared_matrix / len(selected_dates)) - (average_matrix ** 2)
-    
-    # Calculate the standard deviation: std(X) = sqrt(Var(X))
-    std_dev_matrix = np.sqrt(variance_matrix)
-    
-    # Handle the case where the standard deviation is zero to avoid division by zero
-    # You can set those entries to a specific value (e.g., np.inf or 0)
-    std_dev_matrix[std_dev_matrix == 0] = np.inf  # Prevent division by zero
-    
-    # Calculate the element-wise average divided by the standard deviation
-    result_matrix = average_matrix / std_dev_matrix
-    
-    return result_matrix
-
 
 # i should start from 0. In other words, to get the first PP's expected return you must set i=0.
 def get_ith_PPs_expected_return(S,i):
@@ -173,10 +105,10 @@ def get_ith_position_matrix(U,VT,i):
     return np.outer(v_column,u_column)
 
 def first_n_PPs_expected_return(S,n):
-    sum = 0
+    sum_val = 0
     for i in range(n):
-        sum += get_ith_PPs_expected_return(S,i)
-    return sum
+        sum_val += get_ith_PPs_expected_return(S,i)
+    return sum_val
 
 def first_n_PPs_position_matrix(U,VT,number_of_PPs):
     matrix_shape = U.shape
@@ -235,31 +167,24 @@ def first_n_PAPs_position_matrix(sorted_eigenvectors_ta_real_part,sorted_eigenve
     return sum_matrix/number_of_PAPs
 
 def calculate_sharpe_ratio(returns):
-    # Compute excess returns
-    
     # Compute average excess return
     average_return = returns.mean()
-    
     # Compute standard deviation of returns
     std_dev_returns = returns.std()
-    
     # Compute Sharpe Ratio
     sharpe_ratio = average_return / std_dev_returns
-    
     return sharpe_ratio
 
 def filter_dataframes_by_common_dates(df1, df2, is_date_index=True):
     # Find common dates (intersection of index values)
     if is_date_index:
         common_dates = df1.index.intersection(df2.index)
-        
         # Filter both dataframes to keep only the rows with the common dates
         df1_filtered = df1.loc[common_dates]
         df2_filtered = df2.loc[common_dates]
     
     else:
         common_dates = set(df1['date']).intersection(set(df2['date']))
-
         # Filter both DataFrames
         df1_filtered = df1[df1['date'].isin(common_dates)]
         df2_filtered = df2[df2['date'].isin(common_dates)]
@@ -270,39 +195,27 @@ def filter_dataframes_by_common_dates(df1, df2, is_date_index=True):
 def regression_results(X, Y):
     # Get the standard deviation of X[1] (which is the first non-constant column of X)
     std_X1 = X.iloc[:, 1].std()  # Assuming X[1] is the first non-constant column
-
     # Scale Y to have the same standard deviation as X[1]
     std_Y = Y.std()
     Y_scaled = Y * (std_X1 / std_Y)  # Scale Y by the ratio of std_X1 to std_Y
-
     # Add a constant (intercept) to the independent variables
     X = sm.add_constant(X)
-
     # Fit the model
     model = sm.OLS(Y_scaled, X).fit()
-
     # Get the coefficients (including the intercept)
     coefficients = model.params.values
-
-
     # Get the t-statistics
     t_stats = model.tvalues.values
-
     # Calculate the standard deviation of residuals
     residuals = model.resid
     std_residuals = residuals.std(ddof=1)  # Sample standard deviation (ddof=1)
-
     # Calculate intercept divided by standard deviation of residuals
     intercept_over_std_residuals = (coefficients[0] / std_residuals) * math.sqrt(12) #sqrt(12) is to make the IR annualized. again, to make comparison with Kelly's paper easier.
-
     # Get the R-squared value
     r_squared = model.rsquared
-
     coefficients[0] = coefficients[0] * 12 # This is to make the results comparable to Kelly(2023). They report annualized alphas in their tables.
-
     # Get the names of the independent variables (including the constant)
     variable_names = X.columns.tolist()
-
     # Return the list as required
     return [coefficients, t_stats, intercept_over_std_residuals, r_squared, variable_names]
 
@@ -313,7 +226,6 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
             factor_data_monthly=None, number_of_PPs_to_consider = 3,
             number_of_PEPs_to_consider = 3, number_of_PAPs_to_consider = 3,
             use_demeaned_returns = True):
-    
     '''
     # Here input_return_dataset_df, signal_df, portfolio_formation_df and factor_data_monthly have a column named 'date'.
     # Other columns of these dataframes are percentage returns.
@@ -328,7 +240,6 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
         portfolio_formation_df = input_return_dataset_df
 
     input_return_dataset_df,signal_df = filter_dataframes_by_common_dates(input_return_dataset_df.dropna(), signal_df.dropna(), is_date_index=False)
-
     # I can think of this matrix as $S_{t-1}$.
     normalized_signal_df = rank_and_map(signal_df)
     normalized_signal_df = normalized_signal_df[(normalized_signal_df['date'].dt.year > starting_year_to_filter) & (normalized_signal_df['date'].dt.year < end_year_to_filter)].reset_index(drop=True)
@@ -341,7 +252,6 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
     
     # This gives: $R_{t}S'_{t}$
     rs_matrix = compute_rs_product(return_matrix_df, normalized_signal_df)
-    
     """
     Prediction matrix for date T+1, used returns data up to month T and signals data up to month T-1.
     In the function get_prediction_matrix, I start the calculations from the previous month. 
@@ -350,8 +260,6 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
     But remember that the matrix was $S_{t-1}$. So, the index actually retreives the value of the previous month. 
     I formed the matrix this way in order to make the calculations easier.
     """
-
-
     realized_returns_df = pd.DataFrame(columns=[
         "date",
         "return_of_simple_factor", 
@@ -364,22 +272,18 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
         "realized_return_of_first_n_PAP",
         "expected_return_of_first_n_PAP"
     ])
-
     # I leave out the first 120 (number of lookback periods) observations to compute the prediction matrix.
     for date_index in return_matrix_df.iloc[number_of_lookback_periods:]['date']:
         date_to_consider = pd.Timestamp(date_index)
-        
         #for PP's
         prediction_matrix = get_prediction_matrix(date_to_consider, rs_matrix, number_of_lookback_periods)
         U, S, VT = np.linalg.svd(prediction_matrix)
-
         #for PEP's
         Symmetric_prediction_matrix = (prediction_matrix + prediction_matrix.T)/2
         eigenvalues, eigenvectors = np.linalg.eig(Symmetric_prediction_matrix)
         idx = eigenvalues.argsort()[::-1]  # Sort in descending order
         eigenvalues = eigenvalues[idx]
         eigenvectors = eigenvectors[:, idx]
-
         # for PAP'S
         assymetric_prediction_matrix = 0.5 * (prediction_matrix - prediction_matrix.T)
         transposed_assymetric_prediction_matrix = assymetric_prediction_matrix.T
@@ -392,7 +296,6 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
         filtered_eigenvectors_ta = sorted_eigenvectors_ta[:, positive_indices].squeeze()
         sorted_eigenvectors_ta_imaginary_part = filtered_eigenvectors_ta.imag
         sorted_eigenvectors_ta_real_part = filtered_eigenvectors_ta.real
-
         #to calculate realized returns
         signal_vector = normalized_signal_df[normalized_signal_df.date == date_to_consider].values[0, 1:].reshape(1, -1)  # 1*n matrix
         '''
@@ -402,8 +305,6 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
         The size of the long position is the same as the short position. So, the mean will cancell out.
         '''
         return_vector = portfolio_formation_df[portfolio_formation_df.date == date_to_consider].values[0, 1:].reshape(-1, 1)  # n*1 matrix
-        
-
         # Compute realized returns
         return_of_simple_factor = (signal_vector @ return_vector)[0][0]
         realized_return_of_first_n_PP = (signal_vector @ first_n_PPs_position_matrix(U, VT, number_of_PPs_to_consider) @ return_vector)[0][0]
@@ -414,8 +315,6 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
         expected_return_of_first_n_PEP = first_n_PEPs_expected_return(eigenvalues, number_of_PEPs_to_consider) 
         realized_return_of_first_n_PAP = (signal_vector @ first_n_PAPs_position_matrix(sorted_eigenvectors_ta_real_part,sorted_eigenvectors_ta_imaginary_part,number_of_PAPs_to_consider) @ return_vector)[0][0]
         expected_return_of_first_n_PAP = first_n_PAPs_expected_return(filtered_eigenvalues_ta, number_of_PAPs_to_consider)
-        
-
         # Prepare a list for the current row values
         row_values = [
             date_index,
@@ -429,39 +328,31 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
             realized_return_of_first_n_PAP,
             expected_return_of_first_n_PAP
         ]
-
         # Iterate over all Principal Portfolios (up to len(S)) and calculate realized/expected returns for each
         for i in range(len(S)):
-
             # for PP's
             realized_return_ith_PP = (signal_vector @ get_ith_position_matrix(U, VT, i) @ return_vector)[0][0]
             expected_return_ith_PP = get_ith_PPs_expected_return(S, i)
             # Add the values for realized and expected returns of the ith PP to the row
             row_values.append(realized_return_ith_PP)
             row_values.append(expected_return_ith_PP)
-
             # for PEP's
             realized_return_ith_PEP = (signal_vector @ get_ith_symmetric_position_matrix(eigenvectors, i) @ return_vector)[0][0]
             expected_return_ith_PEP = get_ith_PEPs_expected_return(eigenvalues, i)
             # Add the values for realized and expected returns of the ith PEP to the row
             row_values.append(realized_return_ith_PEP)
             row_values.append(expected_return_ith_PEP)
-
-
             # Dynamically add columns if they don't exist. for PP's.
             realized_col_name_pp = f"realized_return_of_{i+1}_PP"
             expected_col_name_pp = f"expected_return_of_{i+1}_PP"
-
             # Dynamically add columns if they don't exist. for PEP's.
             realized_col_name_pep = f"realized_return_of_{i+1}_PEP"
             expected_col_name_pep = f"expected_return_of_{i+1}_PEP"
-            
             # for PP's
             if realized_col_name_pp not in realized_returns_df.columns:
                 realized_returns_df[realized_col_name_pp] = None
             if expected_col_name_pp not in realized_returns_df.columns:
                 realized_returns_df[expected_col_name_pp] = None
-
             #for PEP'S
             if realized_col_name_pep not in realized_returns_df.columns:
                 realized_returns_df[realized_col_name_pep] = None
@@ -476,11 +367,9 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
             # Add the values for realized and expected returns of the ith PEP to the row
             row_values.append(realized_return_ith_PAP)
             row_values.append(expected_return_ith_PAP)
-
             # Dynamically add columns if they don't exist. for PEP's.
             realized_col_name_pap = f"realized_return_of_{i+1}_PAP"
             expected_col_name_pap = f"expected_return_of_{i+1}_PAP"
-
             #for PAP'S
             if realized_col_name_pap not in realized_returns_df.columns:
                 realized_returns_df[realized_col_name_pap] = None
@@ -489,11 +378,7 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
 
         # Append the row to the dataframe
         realized_returns_df.loc[len(realized_returns_df)] = row_values
-
-    #realized_returns_df = find_factor_returns_expected_sign(realized_returns_df)          ### Only for testing.
     realized_returns_df = realized_returns_df.set_index("date")
-
-
     pap_std = realized_returns_df['realized_return_of_first_n_PAP'].std()
     pep_std = realized_returns_df['realized_return_of_first_n_PEP'].std()
     realized_returns_df['adjusted_PAP'] = realized_returns_df['realized_return_of_first_n_PAP'] * (pep_std / pap_std)
@@ -501,21 +386,14 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
     realized_returns_df['PEP and PAP 1-n'] = (realized_returns_df['adjusted_PAP'] + realized_returns_df['realized_return_of_first_n_PEP']) / 2
     # drop the adjusted column.
     realized_returns_df.drop(columns='adjusted_PAP', inplace=True)
-
-
     realized_returns_df['long-short PEP and PAP 1-n'] = 0.5 * (realized_returns_df['realized_return_of_first_n_PAP'] + realized_returns_df["long_short_realized_PEP"])
-
-
     sharpe_df = realized_returns_df.drop(realized_returns_df.filter(like="expected").columns, axis=1).apply(lambda col: calculate_sharpe_ratio(col)) * math.sqrt(12)
-
     pp_columns = realized_returns_df.filter(like="PP")
     pp_realized_mean_df = pp_columns.filter(like="realized").mean(axis=0)
     pp_expected_mean_df = pp_columns.filter(like="expected").mean(axis=0)
-
     pep_columns = realized_returns_df.filter(like="PEP")
     pep_realized_mean_df = pep_columns.filter(like="realized").mean(axis=0)
     pep_expected_mean_df = pep_columns.filter(like="expected").mean(axis=0)
-
     pap_columns = realized_returns_df.filter(like="PAP")
     pap_realized_mean_df = pap_columns.filter(like="realized").mean(axis=0)
     pap_expected_mean_df = pap_columns.filter(like="expected").mean(axis=0)
@@ -537,7 +415,6 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
         X = factor_data_monthly[['Mkt-RF', 'SMB','HML','RMW','CMA']]
         Y = realized_returns_df['return_of_simple_factor']
         output_dict["regression_result_return_of_simple_factor"] = regression_results(X,Y)
-
         # Following Kelly's paper. For regressions that have PP's as Y, simple factor must be addes as X.
         X = pd.concat([X, realized_returns_df['return_of_simple_factor']], axis=1)
         # List of column names in realized_returns_df for which I want to perform the regression
@@ -545,7 +422,6 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
                         'realized_return_of_first_n_PEP',
                         'realized_return_of_first_n_PAP',
                         'PEP and PAP 1-n'] 
-
         # Iterate over each column
         for col in columns_to_iterate:
             # Set Y to the column from realized_returns_df
@@ -556,27 +432,7 @@ def build_PP(input_return_dataset_df, signal_df, number_of_lookback_periods,
     return output_dict  
 
 
-
-"""
-This function is not part of the baseline implementation. 
-If the signal being used is so bad that a simple factor based on that generates negative returns, the PP methodology will break and a function like this is needed to get the correct sign of the average return. 
-The implementation I have here is completely subject to look-ahead bias and only for showcasing the idea.
-"""
-def find_factor_returns_expected_sign(df, factor_column='return_of_simple_factor'):
-    # Calculate the sign of the mean of the 'return_of_simple_factor' column
-    sign_mean = np.sign(df['return_of_simple_factor'].mean())
-    
-    # Select columns that contain 'PP' or 'PEP' but do not contain 'expected'
-    selected_columns = [col for col in df.columns if ('PP' in col or 'PEP' in col) and 'expected' not in col]
-    
-    # Multiply the selected columns by the sign of the mean
-    df[selected_columns] = df[selected_columns].apply(lambda x: x * sign_mean)
-            
-    return df
-
-
 def singular_values_vs_realized_returns_graph(output_dict,portfolios_key,number_of_portfolios,title):
-
     x = np.arange(1, number_of_portfolios)
     singular_values = output_dict[portfolios_key]["pp_expected_mean_df"][1:].values
     eigenvalues_symmetric = output_dict[portfolios_key]["pep_expected_mean_df"][1:].values
@@ -585,93 +441,45 @@ def singular_values_vs_realized_returns_graph(output_dict,portfolios_key,number_
     # the below line starts from 3 because the first 3 elements are the first and last n PEP's and long-short PEP.
     pep_returns = output_dict[portfolios_key]["pep_realized_mean_df"][3:].values
     pap_returns = output_dict[portfolios_key]["pap_realized_mean_df"][1:].values
-
     plt.rcParams['axes.grid'] = True
     # Create 3x2 subplots
     fig, axs = plt.subplots(3, 2, figsize=(8, 12))  # 3 rows, 2 columns
-
     # Panel A: Singular values
     axs[0, 0].plot(x, singular_values, 'k.-')
     axs[0, 0].set_title('Panel A. Π Singular Values')
     axs[0, 0].set_xlabel('Eigenvalue Number')
     axs[0, 0].set_ylabel('Singular Value')
-
     # Panel B: Symmetric eigenvalues
     axs[1, 0].plot(x, eigenvalues_symmetric, 'k.-')
     axs[1, 0].set_title('Panel B. Π^s Eigenvalues')
     axs[1, 0].set_xlabel('Eigenvalue Number')
     axs[1, 0].set_ylabel('Eigenvalue (λ)')
-
     # Panel C: Antisymmetric eigenvalues
     axs[2, 0].plot(np.arange(1, int(number_of_portfolios/2)), eigenvalues_antisymmetric, 'k.-')
     axs[2, 0].set_title('Panel C. Π^a Eigenvalues')
     axs[2, 0].set_xlabel('Eigenvalue Number')
     axs[2, 0].set_ylabel('Eigenvalue (λ)')
-
     # Panel D: PP Average Returns
     axs[0, 1].plot(x, pp_returns, 'k.-')
     axs[0, 1].set_title('Panel D. PP Average Returns')
     axs[0, 1].set_xlabel('Eigenvalue Number')
     axs[0, 1].set_ylabel('PP Returns (%)')
-
     # Panel E: PEP Average Returns
     axs[1, 1].plot(x, pep_returns, 'k.-')
     axs[1, 1].set_title('Panel E. PEP Average Returns')
     axs[1, 1].set_xlabel('Eigenvalue Number')
     axs[1, 1].set_ylabel('PEP Returns (%)')
-
     # Panel F: PAP Average Returns
     axs[2, 1].plot(np.arange(1, int(number_of_portfolios/2)), pap_returns, 'k.-')
     axs[2, 1].set_title('Panel F. PAP Average Returns')
     axs[2, 1].set_xlabel('Eigenvalue Number')
     axs[2, 1].set_ylabel('PAP Returns (%)')
-
     for ax in axs.flat:
         ax.yaxis.set_major_locator(MultipleLocator(0.1)) 
 
     # Add a title for the entire figure
     fig.suptitle(title, fontsize=16)
-
     # Adjust layout
     plt.tight_layout()
     plt.show()
     
-
-
-#this function is not used. it is just for testing purposes and will be deleted.
-def find_factor_returns_expected_sign_2(return_matrix_df,normalized_signal_df,portfolio_formation_df,number_of_lookback_periods):
-    realized_returns_df = pd.DataFrame(columns=[
-        "date",
-        "return_of_simple_factor", 
-    ])
-
-    for date_index in return_matrix_df.iloc[number_of_lookback_periods-24:number_of_lookback_periods]['date']:
-        date_to_consider = pd.Timestamp(date_index)
-        signal_vector = normalized_signal_df[normalized_signal_df.date == date_to_consider].values[0, 1:].reshape(1, -1)  # 1*n matrix
-        return_vector = portfolio_formation_df[portfolio_formation_df.date == date_to_consider].values[0, 1:].reshape(-1, 1)  # n*1 matrix
-        return_of_simple_factor = (signal_vector @ return_vector)[0][0]
-        row_values = [date_index, return_of_simple_factor]
-
-        realized_returns_df.loc[len(realized_returns_df)] = row_values
-
-    sign_mean = np.sign(realized_returns_df['return_of_simple_factor'].mean())
-    return sign_mean
-
-#this function is not used. it is just for testing purposes and will be deleted.
-def find_factor_returns_expected_sign_3(normalized_signal_df,portfolio_formation_df,date_to_consider,rolling_periods=60):
-    realized_returns_df = pd.DataFrame(columns=[
-        "date",
-        "return_of_simple_factor", 
-    ])
-    index_value = normalized_signal_df[normalized_signal_df['date'] == date_to_consider].index[0]
-
-    for idx in range(index_value-rolling_periods,index_value):
-        signal_vector = normalized_signal_df[normalized_signal_df.index == idx].values[0, 1:].reshape(1, -1)  # 1*n matrix
-        return_vector = portfolio_formation_df[portfolio_formation_df.index == idx].values[0, 1:].reshape(-1, 1)  # n*1 matrix
-        return_of_simple_factor = (signal_vector @ return_vector)[0][0]
-        row_values = [idx, return_of_simple_factor]
-
-        realized_returns_df.loc[len(realized_returns_df)] = row_values
-
-    sign_mean = np.sign(realized_returns_df['return_of_simple_factor'].mean())
-    return sign_mean
