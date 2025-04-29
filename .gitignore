@@ -1,21 +1,11 @@
-/doc
-/Doc
-/data
-
-*.csv
-
 # Ignore all JSON files
 *.json
-
-# Ignore all PDF files
-*.pdf
 
 # Ignore all RTF files
 *.rtf
 
 *.jpg
 *.html
-
 
 # Visual Studio Code settings
 .vscode/
