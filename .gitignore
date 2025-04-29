@@ -4,7 +4,6 @@
 # Ignore all RTF files
 *.rtf
 
-*.jpg
 *.html
 
 # Visual Studio Code settings
