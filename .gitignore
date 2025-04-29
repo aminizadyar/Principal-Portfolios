@@ -4,8 +4,6 @@
 # Ignore all RTF files
 *.rtf
 
-*.html
-
 # Visual Studio Code settings
 .vscode/
 .history/
