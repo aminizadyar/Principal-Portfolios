@@ -77,53 +77,43 @@ Collecting every element in a single matrix lets us use *all* this information a
 
 ### 2 · Optimal linear rule
 
-A **position matrix** $L$ is just a recipe that converts today’s signals into portfolio
-weights:
+Pick a **position matrix** $L$ that turns signals into weights $w_t = S_t^\top L$.  
 
-\[
-w_t = S_t^\top L .
-\]
+* **Simple-factor portfolio.**  
+  Taking $L = I$ (the identity) gives $w_t = S_t$: each asset is traded only on its *own* signal.  
+  This is the classic long-only “characteristic-sorted factor” and uses *only* the diagonal of $\Pi$.
 
-We cap its overall size with the norm constraint $\lVert L\rVert\le1$ and then pick the
-recipe that maximises next-period expected return:
+* **Long-short portfolio.**  
+  Restricting $S_t$ to the largest and smallest signals gives:
+    $$
+    LS_{t+1} \;=\; D_t^\top R_{t+1},
+    $$
+  Where:
+    $$
+    D_{j,t} \;=\;
+    \begin{cases}
+      +1 & \text{if } S_{j,t} = \displaystyle\max_i S_{i,t},\\[6pt]
+      -1 & \text{if } S_{j,t} = \displaystyle\min_i S_{i,t},\\[6pt]
+        0 & \text{otherwise.}
+    \end{cases}
+    $$
 
-\[
+
+We bound its overall size by ‖$L$‖ ≤ 1 and choose the recipe that maximises next-period expected return:
+
+$$
 \max_{L}\;\mathbb{E}[S_t^\top L R_{t+1}]
 \quad\Longrightarrow\quad
-L^* = (\Pi^\top \Pi)^{-1/2}\,\Pi^\top ,
-\]
+L^* = (\Pi^\top \Pi)^{-1/2}\,\Pi^\top,
+$$
 
-delivering an expected value of $\sum_k \sigma_k$ where
-$\{\sigma_k\}$ are the singular values of $\Pi$.
+achieving value $\sum_k \sigma_k$ where $\{\sigma_k\}$ are the singular values of $\Pi$.
 
-* **Simple-factor portfolio**  
-  Set $L = I$ (the identity).  
-  Then $w_t = S_t$ and the strategy buys each asset in proportion to **its own signal** only.
-  This is the classic “characteristic-sorted” factor and relies solely on the *diagonal*
-  of $\Pi$.
 
-* **Signal-spread long-short portfolio**  
-  A minimalist cross-asset trade takes the
-  **highest-signal asset long** and the **lowest-signal asset short**:
 
-  \[
-  w_t = D_t, \qquad
-  D_{j,t} =
-  \begin{cases}
-  +1 & \text{if } S_{j,t} = \max_i S_{i,t},\\[4pt]
-  -1 & \text{if } S_{j,t} = \min_i S_{i,t},\\[4pt]
-  0  & \text{otherwise.}
-  \end{cases}
-  \]
 
-  In matrix form this is $w_t = S_t^\top L$ with a diagonal
-  $L = \operatorname{diag}(D_t)$ that changes sign according to the signal ranking.
-  Unlike the simple factor, it **exploits the spread** between extreme signals and
-  taps into the *off-diagonal* information in $\Pi$.
 
-The optimal $L^*$ is a data-driven blend that uses **every** element of $\Pi$
-— diagonal and off-diagonal — to harvest all available predictability.
-
+The optimal matrix $L^*$ is a weighted mix of these two extremes, using **every** entry of $\Pi$ to squeeze out all available predictability.
 
 ---
 
