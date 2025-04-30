@@ -77,7 +77,7 @@ Collecting every element in a single matrix lets us use *all* this information a
 
 ### 2 · Optimal linear rule
 
-We consider a set of linear strategies of the form $R_{t+1}^w = w_t^\top R_{t+1}$. Pick a **position matrix** $L$ that turns signals into weights $w_t = S_t^\top L$. The framework nests the traditional and more familiar cases of simple factor portfolios and long-short portfolios.
+We consider a set of linear strategies of the form $R_{t+1}^w = w_t^\top R_{t+1}$. Define a **position matrix** $L$ that turns signals into weights $w_t = S_t^\top L$. This framework nests the traditional and more familiar cases of simple factor portfolios and long-short portfolios.
 
 * **Simple factor portfolio.**  
   Taking $L = I$ (the identity matrix) gives $w_t = S_t$: each asset is traded only on its *own* signal.  
@@ -91,21 +91,13 @@ We consider a set of linear strategies of the form $R_{t+1}^w = w_t^\top R_{t+1}
              0 otherwise <br>
   Notably the long-short (LS) portfolio would simply be $LS_{t+1} = D_t^\top R_{t+1}$.
 
-We bound its overall size by ‖$L$‖ ≤ 1 and choose the recipe that maximises next-period expected return :
-
+We bound the overall size of the position matrix by ‖$L$‖ ≤ 1. The constraint represents a bound on the portfolio size. Then we solve the following optimization problem to find the optimal portfolio:
 $$
 \max_{L}\;\mathbb{E}[S_t^\top L R_{t+1}]
 \quad\Longrightarrow\quad
 L^* = (\Pi^\top \Pi)^{-1/2}\,\Pi^\top,
 $$
-
-achieving value $\sum_k \sigma_k$ where $\{\sigma_k\}$ are the singular values of $\Pi$.
-
-
-
-
-
-The optimal matrix $L^*$ is a weighted mix of these two extremes, using **every** entry of $\Pi$ to squeeze out all available predictability.
+The optimal position matrix is denoted by $L^*$ and is expressed in terms of the prediction matrix.
 
 ---
 
