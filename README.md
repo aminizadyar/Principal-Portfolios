@@ -60,10 +60,8 @@ The optimal value equals the sum of the singular values $\{\sigma_k\}$ of $\Pi$.
 SVD decomposition: $\Pi = U \Sigma V^\top$.  
 For each singular triplet $(u_k, v_k, \sigma_k)$:
 
-$$
-L_k = v_k u_k^\top, \quad
-\text{PP}_k(t+1) = S_t^\top L_k R_{t+1}
-$$
+$$ L_k = v_k u_k^\top, \quad
+\text{PP}_k(t+1) = S_t^\top L_k R_{t+1} $$
 
 `L_k = v_k u_kᵀ`, `PP_k(t+1) = S_tᵀ L_k R_{t+1}`
 
@@ -109,9 +107,3 @@ Kelly, B., Malamud, S., & Pedersen, L. H. (2023). [*Principal Portfolios*](https
 
 MIT
 ```
-
----
-
-You can copy and paste the fixed version above into your `README.md`. It will render properly on GitHub (though the math won't look like LaTeX—it'll be readable and clean).
-
-Would you like help setting up GitHub Pages with MathJax so the equations display beautifully?
