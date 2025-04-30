@@ -77,7 +77,7 @@ Collecting every element in a single matrix lets us use *all* this information a
 
 ### 2 · Optimal linear rule
 
-We consider a set of linear strategies of the form $R^{w}_{t+1} = w'_t R_{t+1}$. Pick a **position matrix** $L$ that turns signals into weights $w_t = S_t^\top L$. The framework nests the traditional and more familiar cases of simple factor portfolios and long-short portfolios.
+We consider a set of linear strategies of the form ![Equation](https://latex.codecogs.com/svg.latex?R%5E%7Bw%7D_%7Bt%2B1%7D%20%3D%20w%27_t%20R_%7Bt%2B1%7D). Pick a **position matrix** $L$ that turns signals into weights $w_t = S_t^\top L$. The framework nests the traditional and more familiar cases of simple factor portfolios and long-short portfolios.
 
 * **Simple factor portfolio.**  
   Taking $L = I$ (the identity matrix) gives $w_t = S_t$: each asset is traded only on its *own* signal.  
