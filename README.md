@@ -1,34 +1,3 @@
-GitHub-flavored Markdown does **not support LaTeX equations** rendered inside `\[ ... \]` or `\( ... \)` environments, nor does it support LaTeX-style alignment or matrix notation out of the box.
-
-To render math properly on your GitHub README, you have two main options:
-
----
-
-### ✅ **Option 1: Use images for equations**
-Best for perfect display, but less flexible/editable.
-
----
-
-### ✅ **Option 2: Use MathJax via HTML** *(recommended workaround)*
-
-You can make GitHub render LaTeX using a simple MathJax setup with inline HTML tags (`<script>` and `<style>` won’t work on GitHub Pages/README, so this is limited). Instead, you can do the following:
-
-- Use backticks with `math` environments in a simplified way using **dollar signs (`$...$` for inline, `$$...$$` for block)**.
-- Equations will still **not render as math** on the main GitHub repo page but **will render** on GitHub Pages if you set up a proper Jekyll site.
-
-But assuming you're staying in `README.md`, your best bet is to:
-
----
-
-## ✅ **Fix your current README with inline formatting**
-Here's your **fixed version** that works best **on GitHub** using **`$` for inline math** and triple backticks for code.
-
----  
-I'll keep your formatting, but change the math parts to be Markdown/GitHub-friendly:
-
----
-
-```markdown
 # principal_portfolios
 
 A Python package implementing the **Principal Portfolios** methodology introduced by Kelly, Malamud, and Pedersen (2023), *The Journal of Finance*.
@@ -81,6 +50,7 @@ $$
 L^* = (\Pi^\top \Pi)^{-1/2} \Pi^\top
 $$
 
+
 The optimal value equals the sum of the singular values $\{\sigma_k\}$ of $\Pi$.
 
 ---
@@ -94,6 +64,9 @@ $$
 L_k = v_k u_k^\top, \quad
 \text{PP}_k(t+1) = S_t^\top L_k R_{t+1}
 $$
+
+`L_k = v_k u_kᵀ`, `PP_k(t+1) = S_tᵀ L_k R_{t+1}`
+
 
 with expected return $\mathbb{E}[\text{PP}_k] = \sigma_k$.  
 Summing all PPs reproduces the optimal strategy.
