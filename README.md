@@ -127,15 +127,7 @@ Because 𝑈 and 𝑉 are orthonormal, the 𝑃<sub>𝑘</sub> and 𝑠<sub>𝑘
 **Trading rule:**
 
 <div align="center">
-  𝑤<sub>𝑡</sub> = 𝑆<sub>𝑡</sub><sup>⊤</sup>𝑉 𝑈<sup>⊤</sup> = 
-  <span style="display: inline-block; vertical-align: middle; height: 3em; line-height: 3em;">
-    <span style="display: inline-block; vertical-align: middle; line-height: normal;">
-      <span style="display: block; text-align: center;">𝐾</span>
-      <span style="display: block; text-align: center;">∑</span>
-      <span style="display: block; text-align: center;">𝑘=1</span>
-    </span>
-  </span>
-  𝑠<sub>𝑘,𝑡</sub> 𝑢<sub>𝑘</sub>
+  𝑤<sub>𝑡</sub> = 𝑆<sub>𝑡</sub><sup>⊤</sup>𝑉 𝑈<sup>⊤</sup> = ∑ 𝑠<sub>𝑘,𝑡</sub> 𝑢<sub>𝑘</sub>
 </div>
 
 ---
