@@ -175,22 +175,6 @@ Start by splitting the prediction matrix into its symmetric and antisymmetric pa
 
 ---
 
-### 4 · Alpha / Beta symmetry
-
-Split
-
-$$
-\Pi_s = \tfrac12(\Pi + \Pi^\top), \quad
-\Pi_a = \tfrac12(\Pi - \Pi^\top).
-$$
-
-| Block                   | Decomposition      | Strategy                       | Property              |
-|-------------------------|--------------------|--------------------------------|-----------------------|
-| Symmetric $\Pi_s$       | eigenvectors ⇒ **PEPs** | Factor-exposed (beta)         | Return = eigenvalue   |
-| Antisymmetric $\Pi_a$   | eigenvectors ⇒ **PAPs** | Beta-neutral (alpha)          | Pure alpha source     |
-
----
-
 ### 5 · Asset-pricing test
 
 If signals are genuine betas to the pricing kernel, no-arbitrage ⇒ $\Pi$ must be *symmetric & positive-semidefinite*.
