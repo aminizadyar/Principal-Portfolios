@@ -58,7 +58,7 @@ A full notebook example lives in [`examples/`](examples/).
 
 ---
 
-## Methodology in a Nutshell 📐
+## Methodology in a Nutshell 
 
 ### 1 · Prediction matrix $\Pi$
 
@@ -69,8 +69,8 @@ $$
 \Pi_{ij} = \mathbb{E}[R_{i,t+1} S_{j,t}].
 $$
 
-* **Diagonal** elements ($i=j$) capture the familiar *own-signal predictability* — how a stock’s *own* signal forecasts its next return.  
-* **Off-diagonal** elements ($i\neq j$) capture *cross-predictability* — how the signal of asset $j$ forecasts the return of asset $i$.  
+* **Diagonal** elements ($i=j$) capture *own-signal predictability* — how a stock’s *own* signal forecasts its future return.  
+* **Off-diagonal** elements ($i\neq j$) capture *cross-predictability* — how the signal of asset $j$ forecasts the future return of asset $i$.  
   Collecting every element in a single matrix lets us use *all* this information at once, rather than throwing away the rich cross-asset structure.
 
 ---
