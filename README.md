@@ -106,6 +106,30 @@ The optimal position matrix is denoted by $L^*$ and is expressed in terms of the
 
 ---
 
+### 3 · Principal portfolios via SVD
+
+<div align="center">
+  Π = U Σ V<sup>⊤</sup>
+</div>
+
+* **Portfolio weights:** 𝑢<sub>𝑘</sub> (columns of 𝑈)  
+  𝑃<sub>𝑘,𝑡+1</sub> = 𝑢<sub>𝑘</sub><sup>⊤</sup>𝑅<sub>𝑡+1</sub>
+
+* **Signal factors:** 𝑣<sub>𝑘</sub> (columns of 𝑉)  
+  𝑠<sub>𝑘,𝑡</sub> = 𝑣<sub>𝑘</sub><sup>⊤</sup>𝑆<sub>𝑡</sub>
+
+* **Predictive strength:** σ<sub>𝑘</sub> (diagonal of Σ)  
+  𝔼[𝑃<sub>𝑘,𝑡+1</sub>𝑠<sub>𝑘,𝑡</sub>] = σ<sub>𝑘</sub>
+
+Because 𝑈 and 𝑉 are orthonormal, the 𝑃<sub>𝑘</sub> and 𝑠<sub>𝑘</sub> series are pairwise uncorrelated. Rank by σ<sub>𝑘</sub> and keep the top 𝐾 to get a low-dimensional, maximally predictable 𝐾-factor strategy.
+
+**Trading rule:**
+
+<div align="center">
+  𝑤<sub>𝑡</sub> = 𝑆<sub>𝑡</sub><sup>⊤</sup>𝑉 𝑈<sup>⊤</sup> = ∑<sub>𝑘=1</sub><sup>𝐾</sup> 𝑠<sub>𝑘,𝑡</sub> 𝑢<sub>𝑘</sub>
+</div>
+
+---
 ### 3 · Principal Portfolios (PPs)
 
 SVD: $\Pi = U\,\Sigma\,V^\top$.
