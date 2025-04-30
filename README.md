@@ -132,18 +132,14 @@ Because 𝑈 and 𝑉 are orthonormal, the 𝑃<sub>𝑘</sub> and 𝑠<sub>𝑘
 
 ---
 
-Here’s your section fully adapted for GitHub README compatibility, using HTML/CSS and Unicode substitutions for proper rendering:
-
----
-
 ### 4 · Principal **Exposure** (PEP) & **Alpha** (PAP) portfolios  
 
-Start by splitting the prediction matrix into its symmetric (β-related) and antisymmetric (α-related) parts:  
+Start by splitting the prediction matrix into its symmetric and antisymmetric parts:  
 
 <div align="center">
   Π<sub>𝑠</sub> = ½(Π + Π<sup>⊤</sup>), Π<sub>𝑎</sub> = ½(Π − Π<sup>⊤</sup>), Π = Π<sub>𝑠</sub> + Π<sub>𝑎</sub>
 </div>
-
+<br>
 | Component       | Portfolio Set | Factor β? | Expected Return |
 |-----------------|---------------|-----------|-----------------|
 | **Symmetric Π<sub>𝑠</sub>** | **PEPs** (principal *exposure* portfolios) | Non-zero | 𝔼[PEP<sub>𝑘</sub>] = λ<sup>𝑠</sup><sub>𝑘</sub> (eigenvalue of Π<sub>𝑠</sub>) |
