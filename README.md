@@ -36,20 +36,29 @@ pip install principal_portfolios
 
 ```python
 import pandas as pd
-from principal_portfolios import utils, pp
+from principal_portfolios import utils, principal_portfolios as pp
 
-# 1) load panels of excess returns and signals (shape: T × N)
-returns = pd.read_parquet("returns.parquet")
-signals = pd.read_parquet("signals.parquet")
+# 1) Load panels of excess returns  (T × N)  and predictive signals  (T × N)
+returns = pd.read_parquet("returns.parquet")          # e.g. monthly portfolio returns
+signals = pd.read_parquet("signals.parquet")          # any set of stock-level signals
 
-# 2) build prediction matrix
-Pi_hat = utils.prediction_matrix(returns, signals)
+# 2) Build Principal Portfolios in one call
+#    – 120-month (10-year) rolling estimation window
+#    – keep the top 3 Principal Portfolios (PPs) plus associated PEPs / PAPs
+results = pp.build_PP(
+    portfolios_dataset_df      = returns,
+    signal_df                  = signals,
+    number_of_lookback_periods = 120,     # rolling window length
+    start_year                 = 1963,
+    end_year                   = 2024,
+    n_PP                       = 3,       # how many PPs to keep
+    n_PEP                      = 3,       # principal-exposure portfolios
+    n_PAP                      = 3        # principal-alpha   portfolios
+)
 
-# 3) decompose into principal portfolios
-pp_obj = pp.decompose(Pi_hat, top_k=5)
-
-# 4) trade the first principal portfolio
-weights_t = pp_obj.trade(signals.iloc[-1], k=0)   # position vector for next period
+# 3) Inspect what you got back
+print(results.keys())
+# ➜ dict_keys(['weights', 'returns', ...])
 ```
 
 A full notebook example lives in [`examples/`](examples/).
