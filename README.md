@@ -84,22 +84,17 @@ Pick a **position matrix** $L$ that turns signals into weights $w_t = S_t^\top L
   This is the classic long-only “characteristic-sorted factor” and uses *only* the diagonal of $\Pi$.
 
 * **Long-short portfolio.**  
-  ```markdown
-Restricting $S_t$ to the largest and smallest signals gives:  
-\[
-LS_{t+1} \;=\; D_t^{\!\top}\,R_{t+1},
-\]
+  Restricting Sₜ to the largest and smallest signals gives:
 
-Where:  
-\[
-D_{j,t} \;=\;
-\begin{cases}
-  +1 & \text{if } S_{j,t} = \displaystyle\max_i S_{i,t},\\[6pt]
-  -1 & \text{if } S_{j,t} = \displaystyle\min_i S_{i,t},\\[6pt]
-   0 & \text{otherwise.}
-\end{cases}
-\]
-```
+    LS_{t+1} = D_tᵗ R_{t+1},
+
+Where:
+
+    D_{j,t} = 
+      +1  if S_{j,t} = max_i S_{i,t},
+      -1  if S_{j,t} = min_i S_{i,t},
+       0  otherwise.
+
 
 
 We bound its overall size by ‖$L$‖ ≤ 1 and choose the recipe that maximises next-period expected return:
