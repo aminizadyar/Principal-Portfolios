@@ -92,11 +92,13 @@ We consider a set of linear strategies of the form $R_{t+1}^w = w_t^\top R_{t+1}
   Notably the long-short (LS) portfolio would simply be $LS_{t+1} = D_t^\top R_{t+1}$.
 
 We bound the overall size of the position matrix by ‖$L$‖ ≤ 1. The constraint represents a bound on the portfolio size. Then we solve the following optimization problem to find the optimal portfolio:
+
 $$
 \max_{L}\;\mathbb{E}[S_t^\top L R_{t+1}]
 \quad\Longrightarrow\quad
 L^* = (\Pi^\top \Pi)^{-1/2}\,\Pi^\top,
 $$
+
 The optimal position matrix is denoted by $L^*$ and is expressed in terms of the prediction matrix.
 
 ---
