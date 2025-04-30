@@ -11,11 +11,11 @@
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Methodology in a Nutshell 📐](#methodology-in-a-nutshell-)
-  - [1 · Prediction matrix \(\Pi\)](#1--prediction-matrix-pi)
-  - [2 · Optimal linear rule](#2--optimal-linear-rule)
-  - [3 · Principal Portfolios (PPs)](#3--principal-portfolios-pps)
-  - [4 · Alpha / Beta symmetry](#4--alpha--beta-symmetry)
-  - [5 · Asset-pricing test](#5--assetpricing-test)
+  - [1 · Prediction matrix $\Pi$](#1-·-prediction-matrix-\pi)
+  - [2 · Optimal linear rule](#2-·-optimal-linear-rule)
+  - [3 · Principal Portfolios (PPs)](#3-·-principal-portfolios-pps)
+  - [4 · Alpha / Beta symmetry](#4-·-alpha--beta-symmetry)
+  - [5 · Asset-pricing test](#5-·-asset-pricing-test)
 - [Package Features](#package-features)
 - [Project Roadmap](#project-roadmap)
 - [Citation](#citation)
@@ -60,73 +60,72 @@ A full notebook example lives in [`examples/`](examples/).
 
 ## Methodology in a Nutshell 📐
 
-### 1 · Prediction matrix \(\Pi\)
+### 1 · Prediction matrix $\Pi$
 
-For excess-return vector \(R_{t+1}\in\mathbb R^{N}\) and signal vector \(S_t\in\mathbb R^{N}\)
+For excess-return vector $R_{t+1} \in \mathbb{R}^N$ and signal vector $S_t \in \mathbb{R}^N$:
 
-\[
-\Pi \;=\; \mathbb E\!\bigl[R_{t+1}\,S_t^{\!\top}\bigr], \qquad
-\Pi_{ij}= \mathbb E\!\bigl[\,R_{i,t+1}\,S_{j,t}\bigr].
-\]
+$$
+\Pi = \mathbb{E}[R_{t+1} S_t^\top], \quad
+\Pi_{ij} = \mathbb{E}[R_{i,t+1} S_{j,t}].
+$$
 
-The entire \(\Pi\) (not just its diagonal) embeds cross-asset predictive structure.
+The entire $\Pi$ (not just its diagonal) embeds cross-asset predictive structure.
 
 ---
 
 ### 2 · Optimal linear rule
 
-Pick a constant position matrix \(L\) (‖\(L\)‖ ≤ 1) that maximises one-step expected return
+Pick a constant position matrix $L$ ($\lVert L \rVert \le 1$) that maximises one-step expected return:
 
-\[
-\max_{L}\;\mathbb E[S_t^{\!\top} L R_{t+1}]
+$$
+\max_{L}\;\mathbb{E}[S_t^\top L R_{t+1}]
 \quad\Longrightarrow\quad
-L^{\star} \;=\; \bigl(\Pi^{\!\top}\Pi\bigr)^{-\tfrac12}\,\Pi^{\!\top},
-\]
+L^* = (\Pi^\top \Pi)^{-1/2}\,\Pi^\top,
+$$
 
-achieving value \(\sum_k \sigma_k\) where \(\{\sigma_k\}\) are the singular values of \(\Pi\).
+achieving value $\sum_k \sigma_k$ where $\{\sigma_k\}$ are the singular values of $\Pi$.
 
 ---
 
 ### 3 · Principal Portfolios (PPs)
 
-SVD: \(\Pi = U\Sigma V^{\!\top}\).
+SVD: $\Pi = U\Sigma V^\top$.
 
-For each \(k\):
-\[
-L_k \;=\; v_k u_k^{\!\top}, 
-\qquad
-\text{PP}_k(t+1)\;=\; S_t^{\!\top} L_k R_{t+1},
-\qquad
-\mathbb E[\text{PP}_k]=\sigma_k.
-\]
+For each $k$:
 
-*Timeable portfolios*: the top-\(k\) singular values pinpoint where predictability is strongest.
+$$
+L_k = v_k u_k^\top, \quad
+\mathrm{PP}_k(t+1) = S_t^\top L_k R_{t+1}, \quad
+\mathbb{E}[\mathrm{PP}_k] = \sigma_k.
+$$
+
+*Timeable portfolios*: the top-$k$ singular values pinpoint where predictability is strongest.
 
 ---
 
 ### 4 · Alpha / Beta symmetry
 
-Split  
-\[
-\Pi_s=\tfrac12(\Pi+\Pi^{\!\top}),
-\quad
-\Pi_a=\tfrac12(\Pi-\Pi^{\!\top}).
-\]
+Split
 
-| Block | Decomposition | Strategy | Property |
-|-------|---------------|----------|----------|
-| Symmetric \(\Pi_s\) | eigenvectors ⇒ **PEPs** | Factor-exposed (beta) | Return = eigenvalue |
-| Antisymmetric \(\Pi_a\) | eigenvectors ⇒ **PAPs** | Beta-neutral (alpha) | Pure alpha source |
+$$
+\Pi_s = \tfrac12(\Pi + \Pi^\top), \quad
+\Pi_a = \tfrac12(\Pi - \Pi^\top).
+$$
+
+| Block                   | Decomposition      | Strategy                       | Property              |
+|-------------------------|--------------------|--------------------------------|-----------------------|
+| Symmetric $\Pi_s$       | eigenvectors ⇒ **PEPs** | Factor-exposed (beta)         | Return = eigenvalue   |
+| Antisymmetric $\Pi_a$   | eigenvectors ⇒ **PAPs** | Beta-neutral (alpha)          | Pure alpha source     |
 
 ---
 
 ### 5 · Asset-pricing test
 
-If signals are genuine betas to the pricing kernel, no-arbitrage ⇒ \(\Pi\) must be *symmetric & positive-semidefinite*.
+If signals are genuine betas to the pricing kernel, no-arbitrage ⇒ $\Pi$ must be *symmetric & positive-semidefinite*.
 
-Violations  
-* negative eigenvalues of \(\Pi_s\)  
-* non-zero \(\Pi_a\)  
+Violations:
+- negative eigenvalues of $\Pi_s$
+- non-zero $\Pi_a$
 
 are direct, model-free evidence of mis-pricing.
 
@@ -134,13 +133,13 @@ are direct, model-free evidence of mis-pricing.
 
 ## Package Features
 
-| Module | What it does |
-|--------|--------------|
-| `utils` | Data prep, windowed estimators, signal scaling |
-| `pp.decompose` | SVD / eigendecomp with rank selection and shrinkage |
-| `pp.trade` | Generates period-\(t\) weights for PPs, PEPs, PAPs |
-| `backtest` | Simple vectorised back-testing helpers |
-| `plotting` | Performance charts (cumulative PnL, eigenvalue scree, etc.) |
+| Module        | What it does                          |
+|---------------|---------------------------------------|
+| `utils`       | Data prep, windowed estimators, signal scaling |
+| `pp.decompose`| SVD / eigendecomp with rank selection and shrinkage |
+| `pp.trade`    | Generates period-$t$ weights for PPs, PEPs, PAPs |
+| `backtest`    | Simple vectorised back-testing helpers |
+| `plotting`    | Performance charts (cumulative PnL, eigenvalue scree, etc.) |
 
 *NumPy-only core; optional extras (`pandas`, `matplotlib`) auto-installed.*
 
@@ -162,10 +161,10 @@ Contributions via pull requests are welcome! See [`CONTRIBUTING.md`](CONTRIBUTIN
 
 If you use this code in academic work, please cite both the package and the original paper:
 
-```
+```bibtex
 @software{principal_portfolios,
   author  = {Your Name},
-  title   = {principal\_portfolios: Python implementation of Principal Portfolios},
+  title   = {principal_portfolios: Python implementation of Principal Portfolios},
   year    = {2025},
   url     = {https://github.com/your-github-handle/principal_portfolios},
   version = {<current_version>}
@@ -188,3 +187,4 @@ If you use this code in academic work, please cite both the package and the orig
 ## License
 
 Distributed under the MIT License — see [`LICENSE`](LICENSE) for details.
+
