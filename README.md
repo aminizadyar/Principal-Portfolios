@@ -85,15 +85,9 @@ Pick a **position matrix** $L$ that turns signals into weights $w_t = S_t^\top L
 
 * **Long-short portfolio.**  
   Restricting $S_t$ to the largest and smallest signals gives:
-  $$
-  {L}_{t+1}\;\mathbb{E}[S_t^\top L R_{t+1}]
-  \quad\Longrightarrow\quad
-  L^* = (\Pi^\top \Pi)^{-1/2}\,\Pi^\top,
-  $$
-  $$
+  ```math
     LS_{t+1} = D_t^\top R_{t+1},
-  $$
-
+  ```
 Where:
 
     D_{j,t} = 
