@@ -58,13 +58,10 @@ The optimal value equals the sum of the singular values $\{\sigma_k\}$ of $\Pi$.
 ### 3 · Principal Portfolios (PPs)  
 
 SVD decomposition: $\Pi = U \Sigma V^\top$.  
-For each singular triplet $(u_k, v_k, \sigma_k)$: s
+For each singular triplet $(u_k, v_k, \sigma_k)$:
 
 $$ L_k = v_k u_k^\top, \quad
-\text{PP}_k(t+1) = S_t^\top L_k R_{t+1} $$
-
-`L_k = v_k u_kᵀ`, `PP_k(t+1) = S_tᵀ L_k R_{t+1}`
-
+{PP}_k(t+1) = S_t^\top L_k R_{t+1} $$
 
 with expected return $\mathbb{E}[\text{PP}_k] = \sigma_k$.  
 Summing all PPs reproduces the optimal strategy.
