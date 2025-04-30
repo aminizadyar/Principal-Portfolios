@@ -7,20 +7,18 @@
 > A pure-Python implementation of the **Principal Portfolios** framework introduced by Kelly, Malamud & Pedersen (2023), *The Journal of Finance* for developing optimal trading strategies that exploit both own-asset and cross-asset predictive signals.
 
 ---
-
 - [Installation](#installation)
 - [Quick Start](#quick-start)
-- [Methodology in a Nutshell 📐](#methodology-in-a-nutshell-)
-  - [1 · Prediction matrix $\Pi$](#1-·-prediction-matrix-\pi)
-  - [2 · Optimal linear rule](#2-·-optimal-linear-rule)
-  - [3 · Principal Portfolios (PPs)](#3-·-principal-portfolios-pps)
-  - [4 · Alpha / Beta symmetry](#4-·-alpha--beta-symmetry)
-  - [5 · Asset-pricing test](#5-·-asset-pricing-test)
+- [Methodology in a Nutshell](#methodology-in-a-nutshell)
+  - [1 · Prediction matrix](#1--prediction-matrix)
+  - [2 · Optimal linear rule](#2--optimal-linear-rule)
+  - [3 · Principal portfolios via SVD](#3--principal-portfolios-via-svd)
+  - [4 · Principal Exposure (PEP) & Alpha (PAP) portfolios](#4--principal-exposure-pep--alpha-pap-portfolios)
+  - [5 · Asset-pricing test](#5--asset-pricing-test)
 - [Package Features](#package-features)
 - [Project Roadmap](#project-roadmap)
 - [Citation](#citation)
 - [License](#license)
-
 ---
 
 ## Installation
