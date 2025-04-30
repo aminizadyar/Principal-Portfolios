@@ -86,11 +86,10 @@ We consider a set of linear strategies of the form $R_{t+1}^w = w_t^\top R_{t+1}
 * **Long-short portfolio.**  
   If we restrict $S_t$ to the largest and smallest signals and define $D_{jt}$ where:<br>
   <div align="center">
-  𝐷<sub>𝑗𝑡</sub> = 
   <table>
-    <tr><td>+1</td><td>if 𝑆<sub>𝑗𝑡</sub> is the maximum value at time 𝑡,</td></tr>
-    <tr><td>-1</td><td>if 𝑆<sub>𝑗𝑡</sub> is the minimum value at time 𝑡,</td></tr>
-    <tr><td>0</td><td>otherwise</td></tr>
+    <tr><td>𝐷<sub>𝑗𝑡</sub> = +1</td><td>if 𝑆<sub>𝑗𝑡</sub> is the maximum value at time 𝑡,</td></tr>
+    <tr><td>𝐷<sub>𝑗𝑡</sub> = -1</td><td>if 𝑆<sub>𝑗𝑡</sub> is the minimum value at time 𝑡,</td></tr>
+    <tr><td>𝐷<sub>𝑗𝑡</sub> = 0</td><td>otherwise</td></tr>
   </table>
   </div>
   Notably the long-short (LS) portfolio would simply be $LS_{t+1} = D_t^\top R_{t+1}$.
