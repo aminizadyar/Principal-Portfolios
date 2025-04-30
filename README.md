@@ -89,7 +89,7 @@ Pick a **position matrix** $L$ that turns signals into weights $w_t = S_t^\top L
              +1 if $S_{jt}$ is the maximum value at time t,<br>
              -1 if $S_{jt}$ is the minimum value at time t,<br>
              0 otherwise <br>
-  Notably the long-short portfolio would simply be $LS_{t+1} = D_t^\top R_{t+1}$.
+  Notably the long-short (LS) portfolio would simply be $LS_{t+1} = D_t^\top R_{t+1}$.
 
 We bound its overall size by ‖$L$‖ ≤ 1 and choose the recipe that maximises next-period expected return :
 
