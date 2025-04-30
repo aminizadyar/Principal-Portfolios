@@ -86,10 +86,12 @@ Pick a **position matrix** $L$ that turns signals into weights $w_t = S_t^\top L
 * **Long-short portfolio.**  
   Restricting $S_t$ to the largest and smallest signals:
     $$
-        D_{j,t} = 
-          +1  if S_{j,t} = max_i S_{i,t},
-          -1  if S_{j,t} = min_i S_{i,t},
-          0  otherwise.
+    D_{j,t} =
+    \begin{cases}
+    +1, & \text{if } S_{j,t} = \max\{S_{1,t}, S_{2,t}, \dots, S_{N,t}\} \\
+    -1, & \text{if } S_{j,t} = \min\{S_{1,t}, S_{2,t}, \dots, S_{N,t}\} \\
+    0,  & \text{if else}
+    \end{cases}
     $$
 
 
