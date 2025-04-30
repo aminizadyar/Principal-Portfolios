@@ -87,7 +87,7 @@ Pick a **position matrix** $L$ that turns signals into weights $w_t = S_t^\top L
   If we restrict $S_t$ to the largest and smallest signals and define $D_{jt}$ where: \\
     $D_{jt}$ = 
     +1 if $S_{jt}$ is the maximum value at time t,
-    -1 if $S_{jt$} is the minimum value at time t,
+    -1 if $S_{jt}$ is the minimum value at time t,
     0 otherwise
 
 
