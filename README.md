@@ -58,7 +58,7 @@ A full notebook example lives in [`examples/`](examples/).
 
 ## Methodology in a Nutshell 
 
-### 1 · Prediction matrix $\Pi$
+### 1 · Prediction matrix$
 
 For excess-return vector $R_{t+1} \in \mathbb{R}^N$ and signal vector $S_t \in \mathbb{R}^N$:
 
