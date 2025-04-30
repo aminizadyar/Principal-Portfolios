@@ -80,13 +80,15 @@ Collecting every element in a single matrix lets us use *all* this information a
 Pick a **position matrix** $L$ that turns signals into weights $w_t = S_t^\top L$.  
 
 * **Simple-factor portfolio.**  
-  Taking $L = I$ (the identity) gives $w_t = S_t$: each asset is traded only on its *own* signal.  
+  Taking $L = I$ (the identity matrix) gives $w_t = S_t$: each asset is traded only on its *own* signal.  
   This is the classic long-only “characteristic-sorted factor” and uses *only* the diagonal of $\Pi$.
 
 * **Long-short portfolio.**  
-  Restricting Sₜ to the largest and smallest signals gives:
+  Restricting $S_t$ to the largest and smallest signals gives:
 
-    LS_{t+1} = D_tᵗ R_{t+1},
+  $$
+    LS_{t+1} = D_t^\top R_{t+1},
+  $$
 
 Where:
 
