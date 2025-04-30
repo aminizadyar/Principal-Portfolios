@@ -77,7 +77,7 @@ Collecting every element in a single matrix lets us use *all* this information a
 
 ### 2 · Optimal linear rule
 
-We consider a set of linear strategies of the form $R_{t+1}^w = w_t^\top R_{t+1}$. Define a **position matrix** $L$ that turns signals into weights $w_t = S_t^\top L$. This framework nests the traditional and more familiar cases of simple factor portfolios and long-short portfolios.
+We consider a set of linear strategies of the form $R_{t+1}^w = w_t^\top R_{t+1}$. Define the **position matrix** $L$ that turns signals into weights $w_t = S_t^\top L$. This framework nests the traditional and more familiar cases of simple factor portfolios and long-short portfolios.
 
 * **Simple factor portfolio.**  
   Taking $L = I$ (the identity matrix) gives $w_t = S_t$: each asset is traded only on its *own* signal.  
@@ -85,13 +85,17 @@ We consider a set of linear strategies of the form $R_{t+1}^w = w_t^\top R_{t+1}
 
 * **Long-short portfolio.**  
   If we restrict $S_t$ to the largest and smallest signals and define $D_{jt}$ where:<br>
-  $D_{jt}$ = <br>
-             +1 if $S_{jt}$ is the maximum value at time t,<br>
-             -1 if $S_{jt}$ is the minimum value at time t,<br>
-             0 otherwise <br>
+  <div align="center">
+  𝐷<sub>𝑗𝑡</sub> = 
+  <table>
+    <tr><td>+1</td><td>if 𝑆<sub>𝑗𝑡</sub> is the maximum value at time 𝑡,</td></tr>
+    <tr><td>-1</td><td>if 𝑆<sub>𝑗𝑡</sub> is the minimum value at time 𝑡,</td></tr>
+    <tr><td>0</td><td>otherwise</td></tr>
+  </table>
+  </div>
   Notably the long-short (LS) portfolio would simply be $LS_{t+1} = D_t^\top R_{t+1}$.
 
-We bound the overall size of the position matrix by ‖$L$‖ ≤ 1. The constraint represents a bound on the portfolio size. Then we solve the following optimization problem to find the optimal portfolio:
+We bound the overall size of the position matrix by ‖L‖ ≤ 1 which represents a bound on the portfolio size. Then we solve the following optimization problem to find the optimal portfolio:
 
 $$
 \max_{L}\;\mathbb{E}[S_t^\top L R_{t+1}]
