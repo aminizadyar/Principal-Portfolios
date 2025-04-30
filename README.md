@@ -139,7 +139,7 @@ Start by splitting the prediction matrix into its symmetric and antisymmetric pa
 <div align="center">
   Π<sub>𝑠</sub> = ½(Π + Π<sup>⊤</sup>), Π<sub>𝑎</sub> = ½(Π − Π<sup>⊤</sup>), Π = Π<sub>𝑠</sub> + Π<sub>𝑎</sub>
 </div>
-
+<div style="margin-bottom: 20px;"></div>
 
 
 | Component       | Portfolio Set | Factor β? | Expected Return |
