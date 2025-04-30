@@ -85,14 +85,7 @@ Pick a **position matrix** $L$ that turns signals into weights $w_t = S_t^\top L
 
 * **Long-short portfolio.**  
   Restricting $S_t$ to the largest and smallest signals:
-    $$
-    D_{j,t} =
-    \begin{cases}
-    +1, & \text{if } S_{j,t} = \max\{S_{1,t}, S_{2,t}, \dots, S_{N,t}\} \\
-    -1, & \text{if } S_{j,t} = \min\{S_{1,t}, S_{2,t}, \dots, S_{N,t}\} \\
-    0,  & \text{if else}
-    \end{cases}
-    $$
+    <pre> $$ D_{j,t} = \begin{cases} +1 & \text{if } S_{j,t} = \max\limits_{i \in \{1, \dots, N\}} S_{i,t} \\\\ -1 & \text{if } S_{j,t} = \min\limits_{i \in \{1, \dots, N\}} S_{i,t} \\\\ 0 & \text{otherwise} \end{cases} $$ </pre>
 
 
 We bound its overall size by ‖$L$‖ ≤ 1 and choose the recipe that maximises next-period expected return $LS_{t+1} = D_t^\top R_{t+1}$:
