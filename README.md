@@ -61,7 +61,8 @@ SVD decomposition: $\Pi = U \Sigma V^\top$.
 For each singular triplet $(u_k, v_k, \sigma_k)$:
 
 $$ L_k = v_k u_k^\top 
-\quad {PP}_k(t+1) = S_t^\top L_k R_{t+1} $$
+\quad \Rightarrow \quad
+{PP}_k(t+1) = S_t^\top L_k R_{t+1} $$
 
 with expected return $\mathbb{E}[\text{PP}_k] = \sigma_k$.  
 Summing all PPs reproduces the optimal strategy.
