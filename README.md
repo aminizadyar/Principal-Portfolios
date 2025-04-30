@@ -77,9 +77,9 @@ Collecting every element in a single matrix lets us use *all* this information a
 
 ### 2 · Optimal linear rule
 
-Pick a **position matrix** $L$ that turns signals into weights $w_t = S_t^\top L$.  
+Pick a **position matrix** $L$ that turns signals into weights $w_t = S_t^\top L$. The framework nests the traditional and more familiar cases of simple factor portfolios and long-short portfolios.
 
-* **Simple-factor portfolio.**  
+* **Simple factor portfolio.**  
   Taking $L = I$ (the identity matrix) gives $w_t = S_t$: each asset is traded only on its *own* signal.  
   This is the classic long-only “characteristic-sorted factor” and uses *only* the diagonal of $\Pi$.
 
@@ -89,9 +89,9 @@ Pick a **position matrix** $L$ that turns signals into weights $w_t = S_t^\top L
              +1 if $S_{jt}$ is the maximum value at time t,<br>
              -1 if $S_{jt}$ is the minimum value at time t,<br>
              0 otherwise <br>
+  Notably the long-short portfolio would simply be $LS_{t+1} = D_t^\top R_{t+1}$.
 
-
-We bound its overall size by ‖$L$‖ ≤ 1 and choose the recipe that maximises next-period expected return $LS_{t+1} = D_t^\top R_{t+1}$:
+We bound its overall size by ‖$L$‖ ≤ 1 and choose the recipe that maximises next-period expected return :
 
 $$
 \max_{L}\;\mathbb{E}[S_t^\top L R_{t+1}]
