@@ -71,13 +71,15 @@ $$
 
 * **Diagonal** elements ($i=j$) capture *own-signal predictability* — how a stock’s *own* signal forecasts its future return.  
 * **Off-diagonal** elements ($i\neq j$) capture *cross-predictability* — how the signal of asset $j$ forecasts the future return of asset $i$.  
-  Collecting every element in a single matrix lets us use *all* this information at once, rather than throwing away the rich cross-asset structure.
+Collecting every element in a single matrix lets us use *all* this information at once, rather than throwing away the rich cross-asset structure.
 
 ---
 
 ### 2 · Optimal linear rule
 
-Pick a constant position matrix $L$ ($\lVert L \rVert \le 1$) that maximises one-step expected return:
+Pick a **position matrix** $L$ that turns today’s signals into weights  
+$w_t = S_t^\top L$.  
+We bound its overall size by ‖$L$‖ ≤ 1 and choose the recipe that maximises next-period expected return:
 
 $$
 \max_{L}\;\mathbb{E}[S_t^\top L R_{t+1}]
@@ -86,6 +88,17 @@ L^* = (\Pi^\top \Pi)^{-1/2}\,\Pi^\top,
 $$
 
 achieving value $\sum_k \sigma_k$ where $\{\sigma_k\}$ are the singular values of $\Pi$.
+
+* **Simple-factor portfolio.**  
+  Taking $L = I$ (the identity) gives $w_t = S_t$: each asset is traded only on its *own* signal.  
+  This is the classic long-only “characteristic-sorted factor” and uses *only* the diagonal of $\Pi$.
+
+* **Long-short cross-signal portfolio.**  
+  Choosing an antisymmetric matrix, e.g. $L = x y^\top - y x^\top$, creates a *pair trade*:  
+  when $S_t^\top x$ is high, go long portfolio $y$ and short portfolio $x$, and vice-versa.  
+  Such strategies exploit **off-diagonal** elements of $\Pi$ and are automatically beta-neutral.
+
+The optimal matrix $L^*$ is a weighted mix of these two extremes, using **every** entry of $\Pi$ to squeeze out all available predictability.
 
 ---
 
