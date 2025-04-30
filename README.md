@@ -1,6 +1,25 @@
-# principal_portfolios
+# principal_portfolios <!-- omit in toc -->
 
-A Python package implementing the **Principal Portfolios** methodology introduced by Kelly, Malamud, and Pedersen (2023), *The Journal of Finance*.
+[![PyPI version](https://img.shields.io/pypi/v/principal_portfolios.svg)](https://pypi.org/project/principal_portfolios)
+[![Python](https://img.shields.io/pypi/pyversions/principal_portfolios.svg)](https://pypi.org/project/principal_portfolios)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#license)
+
+> A pure-Python implementation of the **Principal Portfolios** framework introduced by Kelly, Malamud & Pedersen (2023) for turning *signals* into optimal, testable trading strategies that exploit both own-asset and cross-asset predictability.
+
+---
+
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Methodology in a Nutshell 📐](#methodology-in-a-nutshell-)
+  - [1 · Prediction matrix \(\Pi\)](#1--prediction-matrix-pi)
+  - [2 · Optimal linear rule](#2--optimal-linear-rule)
+  - [3 · Principal Portfolios (PPs)](#3--principal-portfolios-pps)
+  - [4 · Alpha / Beta symmetry](#4--alpha--beta-symmetry)
+  - [5 · Asset-pricing test](#5--assetpricing-test)
+- [Package Features](#package-features)
+- [Project Roadmap](#project-roadmap)
+- [Citation](#citation)
+- [License](#license)
 
 ---
 
@@ -10,99 +29,162 @@ A Python package implementing the **Principal Portfolios** methodology introduce
 pip install principal_portfolios
 ```
 
----
-
-## Overview
-
-This package provides tools for constructing and analyzing **Principal Portfolios (PPs)**—linear trading strategies obtained from the singular-value decomposition (SVD) of a **prediction matrix** that captures both own-asset and cross-asset predictive signals.
-
-**Key features**
-
-- Build the prediction matrix from return and signal panels  
-- Decompose that matrix into  
-  - **Principal Portfolios (PPs)** – timeable portfolios ordered by predictability  
-  - **Principal Exposure Portfolios (PEPs)** – factor-exposed (beta) strategies  
-  - **Principal Alpha Portfolios (PAPs)** – beta-neutral (alpha) strategies  
+> Need the dev version?  
+> `pip install git+https://github.com/your-github-handle/principal_portfolios`
 
 ---
 
-## Methodology at a glance 📐
+## Quick Start
 
-### 1 · Prediction matrix  
+```python
+import pandas as pd
+from principal_portfolios import utils, pp
 
-For excess-return vector $R_{t+1} \in \mathbb{R}^{N}$ and signal vector $S_t \in \mathbb{R}^{N}$:
+# 1) load panels of excess returns and signals (shape: T × N)
+returns = pd.read_parquet("returns.parquet")
+signals = pd.read_parquet("signals.parquet")
 
-$$
-\Pi = \mathbb{E}[R_{t+1} S_t^\top]
-$$
+# 2) build prediction matrix
+Pi_hat = utils.prediction_matrix(returns, signals)
 
-So $\Pi_{ij} = \mathbb{E}[R_{i,t+1} S_{j,t}]$ tells how signal $j$ forecasts return $i$.
+# 3) decompose into principal portfolios
+pp_obj = pp.decompose(Pi_hat, top_k=5)
 
----
+# 4) trade the first principal portfolio
+weights_t = pp_obj.trade(signals.iloc[-1], k=0)   # position vector for next period
+```
 
-### 2 · Optimal linear rule  
-
-Choose a fixed position matrix $L$ (with $\| L \| \leq 1$) to maximise:
-
-$$
-\mathbb{E}[S_t^\top L R_{t+1}]
-\quad \Rightarrow \quad
-L^* = (\Pi^\top \Pi)^{-1/2} \Pi^\top
-$$
-
-
-The optimal value equals the sum of the singular values $\{\sigma_k\}$ of $\Pi$.
+A full notebook example lives in [`examples/`](examples/).
 
 ---
 
-### 3 · Principal Portfolios (PPs)  
+## Methodology in a Nutshell 📐
 
-SVD decomposition: $\Pi = U \Sigma V^\top$.  
-For each singular triplet $(u_k, v_k, \sigma_k)$:
+### 1 · Prediction matrix \(\Pi\)
 
-$$ 
-L_k = v_k u_k^\top  \quad
-{PP}_k(t+1) = {S_t^\top} {L_k} {R_{t+1}} 
-$$
+For excess-return vector \(R_{t+1}\in\mathbb R^{N}\) and signal vector \(S_t\in\mathbb R^{N}\)
 
-with expected return $\mathbb{E}[\text{PP}_k] = \sigma_k$.  
-Summing all PPs reproduces the optimal strategy.
+\[
+\Pi \;=\; \mathbb E\!\bigl[R_{t+1}\,S_t^{\!\top}\bigr], \qquad
+\Pi_{ij}= \mathbb E\!\bigl[\,R_{i,t+1}\,S_{j,t}\bigr].
+\]
 
----
-
-### 4 · Alpha/Beta symmetry  
-
-Split the prediction matrix:
-
-$$
-\Pi_s = \tfrac{1}{2}(\Pi + \Pi^\top), \quad
-\Pi_a = \tfrac{1}{2}(\Pi - \Pi^\top)
-$$
-
-- **PEPs**: eigenvectors of $\Pi_s$; returns = eigenvalues; carry factor exposure.  
-- **PAPs**: eigenvectors of $\Pi_a$; beta-neutral by construction; positive returns signal mispricing.
+The entire \(\Pi\) (not just its diagonal) embeds cross-asset predictive structure.
 
 ---
 
-### 5 · Asset-pricing test  
+### 2 · Optimal linear rule
 
-If signals are true betas to the pricing kernel, no-arbitrage implies:  
-$\Pi$ must be symmetric & positive semi-definite.  
+Pick a constant position matrix \(L\) (‖\(L\)‖ ≤ 1) that maximises one-step expected return
 
-Therefore:  
-- Negative eigenvalues in $\Pi_s$  
-- Non-zero $\Pi_a$  
-⇒ provide direct evidence of alpha.
+\[
+\max_{L}\;\mathbb E[S_t^{\!\top} L R_{t+1}]
+\quad\Longrightarrow\quad
+L^{\star} \;=\; \bigl(\Pi^{\!\top}\Pi\bigr)^{-\tfrac12}\,\Pi^{\!\top},
+\]
+
+achieving value \(\sum_k \sigma_k\) where \(\{\sigma_k\}\) are the singular values of \(\Pi\).
 
 ---
 
-## Reference
+### 3 · Principal Portfolios (PPs)
 
-Kelly, B., Malamud, S., & Pedersen, L. H. (2023). [*Principal Portfolios*](https://doi.org/10.1111/jofi.13199). *The Journal of Finance*, 78(1), 347–392.
+SVD: \(\Pi = U\Sigma V^{\!\top}\).
+
+For each \(k\):
+\[
+L_k \;=\; v_k u_k^{\!\top}, 
+\qquad
+\text{PP}_k(t+1)\;=\; S_t^{\!\top} L_k R_{t+1},
+\qquad
+\mathbb E[\text{PP}_k]=\sigma_k.
+\]
+
+*Timeable portfolios*: the top-\(k\) singular values pinpoint where predictability is strongest.
+
+---
+
+### 4 · Alpha / Beta symmetry
+
+Split  
+\[
+\Pi_s=\tfrac12(\Pi+\Pi^{\!\top}),
+\quad
+\Pi_a=\tfrac12(\Pi-\Pi^{\!\top}).
+\]
+
+| Block | Decomposition | Strategy | Property |
+|-------|---------------|----------|----------|
+| Symmetric \(\Pi_s\) | eigenvectors ⇒ **PEPs** | Factor-exposed (beta) | Return = eigenvalue |
+| Antisymmetric \(\Pi_a\) | eigenvectors ⇒ **PAPs** | Beta-neutral (alpha) | Pure alpha source |
+
+---
+
+### 5 · Asset-pricing test
+
+If signals are genuine betas to the pricing kernel, no-arbitrage ⇒ \(\Pi\) must be *symmetric & positive-semidefinite*.
+
+Violations  
+* negative eigenvalues of \(\Pi_s\)  
+* non-zero \(\Pi_a\)  
+
+are direct, model-free evidence of mis-pricing.
+
+---
+
+## Package Features
+
+| Module | What it does |
+|--------|--------------|
+| `utils` | Data prep, windowed estimators, signal scaling |
+| `pp.decompose` | SVD / eigendecomp with rank selection and shrinkage |
+| `pp.trade` | Generates period-\(t\) weights for PPs, PEPs, PAPs |
+| `backtest` | Simple vectorised back-testing helpers |
+| `plotting` | Performance charts (cumulative PnL, eigenvalue scree, etc.) |
+
+*NumPy-only core; optional extras (`pandas`, `matplotlib`) auto-installed.*
+
+---
+
+## Project Roadmap
+
+- [x] Core decomposition & trading API  
+- [ ] Transaction-cost aware back-tests  
+- [ ] Online (“rolling”) SVD with forgetting factor  
+- [ ] R & Julia ports  
+- [ ] Paper replication notebooks  
+
+Contributions via pull requests are welcome! See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+---
+
+## Citation
+
+If you use this code in academic work, please cite both the package and the original paper:
+
+```
+@software{principal_portfolios,
+  author  = {Your Name},
+  title   = {principal\_portfolios: Python implementation of Principal Portfolios},
+  year    = {2025},
+  url     = {https://github.com/your-github-handle/principal_portfolios},
+  version = {<current_version>}
+}
+
+@article{kelly2023principal,
+  title   = {Principal Portfolios},
+  author  = {Kelly, Bryan and Malamud, Semyon and Pedersen, Lasse Heje},
+  journal = {The Journal of Finance},
+  volume  = {78},
+  number  = {1},
+  pages   = {347--392},
+  year    = {2023},
+  doi     = {10.1111/jofi.13199}
+}
+```
 
 ---
 
 ## License
 
-MIT
-```
+Distributed under the MIT License — see [`LICENSE`](LICENSE) for details.
