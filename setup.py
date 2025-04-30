@@ -9,7 +9,7 @@ setup(
     author_email='a.izadyar23@imperial.ac.uk',
     description='A Python implementation of the Principal Portfolios methodology by Kelly, Malamud, and Pedersen (2023), enabling optimal asset allocation by exploiting cross-predictability among asset returns.',
     long_description=open('README.md').read(),
-    long_description_content_type='text/markdown',  # ✅ Add this
+    long_description_content_type='text/markdown', 
     url='https://github.com/aminizadyar/Principal-Portfolios',
     classifiers=[
         'Programming Language :: Python :: 3',
