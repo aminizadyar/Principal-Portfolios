@@ -124,25 +124,57 @@ We apply singular value decomposition (SVD) to derive the principal portfolios:
 
 Because 𝑈 and 𝑉 are orthonormal, the 𝑃<sub>𝑘</sub> and 𝑠<sub>𝑘</sub> series are pairwise uncorrelated. Rank by σ<sub>𝑘</sub> and keep the top 𝐾 to get a low-dimensional, maximally predictable 𝐾-factor strategy.
 
-**Trading rule:**
+**Optimal Trading rule:**
 
 <div align="center">
   𝑤<sub>𝑡</sub> = 𝑆<sub>𝑡</sub><sup>⊤</sup>𝑉 𝑈<sup>⊤</sup> = ∑ 𝑠<sub>𝑘,𝑡</sub> 𝑢<sub>𝑘</sub>
 </div>
 
 ---
-### 3 · Principal Portfolios (PPs)
 
-SVD: $\Pi = U\,\Sigma\,V^\top$.
+Here’s your section fully adapted for GitHub README compatibility, using HTML/CSS and Unicode substitutions for proper rendering:
 
-<p align="center">
-  <img 
-    src="https://latex.codecogs.com/svg.image?\color{magenta}%20L_k%20%3D%20v_k%20u_k%5E%5Ctop%2C%20%5Cquad%20PP_k%28t%2B1%29%20%3D%20S_t%5E%5Ctop%20L_k%20R_%7Bt%2B1%7D%2C%20%5Cquad%20%5Cmathbb%7BE%7D%5BPP_k%5D%20%3D%20%5Csigma_k"  
-    alt="L_k = v_k u_k^⊤,  PP_k(t+1) = S_t^⊤ L_k R_{t+1},  E[PP_k] = σ_k" 
-  />
-</p>
+---
 
-*Timeable portfolios*: the top $k$ singular values pinpoint where predictability is strongest.
+### 4 · Principal **Exposure** (PEP) & **Alpha** (PAP) portfolios  
+
+Start by splitting the prediction matrix into its symmetric (β-related) and antisymmetric (α-related) parts:  
+
+<div align="center">
+  Π<sub>𝑠</sub> = ½(Π + Π<sup>⊤</sup>), Π<sub>𝑎</sub> = ½(Π − Π<sup>⊤</sup>), Π = Π<sub>𝑠</sub> + Π<sub>𝑎</sub>
+</div>
+
+| Component       | Portfolio Set | Factor β? | Expected Return |
+|-----------------|---------------|-----------|-----------------|
+| **Symmetric Π<sub>𝑠</sub>** | **PEPs** (principal *exposure* portfolios) | Non-zero | 𝔼[PEP<sub>𝑘</sub>] = λ<sup>𝑠</sup><sub>𝑘</sub> (eigenvalue of Π<sub>𝑠</sub>) |
+| **Antisymmetric Π<sub>𝑎</sub>** | **PAPs** (principal *alpha* portfolios) | Zero | 𝔼[PAP<sub>𝑗</sub>] = 2λ<sup>𝑎</sup><sub>𝑗</sub> (eigenvalue of 𝑖Π<sub>𝑎</sub>) |
+
+* **PEPs**  
+  Diagonalize Π<sub>𝑠</sub> = 𝑊Λ<sub>𝑠</sub>𝑊<sup>⊤</sup>.  
+  Each eigenvector 𝑤<sub>𝑘</sub> gives a PEP:  
+  <div align="center">
+    PEP<sub>𝑘,𝑡+1</sub> = 𝑆<sub>𝑡</sub><sup>⊤</sup>𝑤<sub>𝑘</sub> 𝑤<sub>𝑘</sub><sup>⊤</sup>𝑅<sub>𝑡+1</sub>
+  </div>
+  Traded long if λ<sup>𝑠</sup><sub>𝑘</sub> > 0, short otherwise. PEPs are the *factor-bearing* legs.
+
+* **PAPs**  
+  For the 𝑗-th purely imaginary eigenpair of Π<sub>𝑎</sub><sup>⊤</sup> (𝑥<sub>𝑗</sub> + 𝑖𝑦<sub>𝑗</sub>), the PAP is:  
+  <div align="center">
+    𝐿<sub>𝑗</sub> = 𝑥<sub>𝑗</sub>𝑦<sub>𝑗</sub><sup>⊤</sup> − 𝑦<sub>𝑗</sub>𝑥<sub>𝑗</sub><sup>⊤</sup>
+  </div>
+  with return:  
+  <div align="center">
+    PAP<sub>𝑗,𝑡+1</sub> = 𝑆<sub>𝑡</sub><sup>⊤</sup>𝐿<sub>𝑗</sub>𝑅<sub>𝑡+1</sub>
+  </div>
+  PAPs harvest *pure alpha*—zero systematic exposure.
+
+* **Complete Strategy**  
+  The optimal linear portfolio combines:  
+  <div align="center">
+    ∑<sub>𝑘</sub> sign(λ<sup>𝑠</sup><sub>𝑘</sub>) PEP<sub>𝑘</sub> + ∑<sub>𝑗</sub> PAP<sub>𝑗</sub>
+  </div>
+  Adjust factor risk (PEPs) and layer portable alpha (PAPs).
+
 
 ---
 
