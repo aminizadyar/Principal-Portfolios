@@ -140,6 +140,8 @@ Start by splitting the prediction matrix into its symmetric and antisymmetric pa
   Π<sub>𝑠</sub> = ½(Π + Π<sup>⊤</sup>), Π<sub>𝑎</sub> = ½(Π − Π<sup>⊤</sup>), Π = Π<sub>𝑠</sub> + Π<sub>𝑎</sub>
 </div>
 
+
+
 | Component       | Portfolio Set | Factor β? | Expected Return |
 |-----------------|---------------|-----------|-----------------|
 | **Symmetric Π<sub>𝑠</sub>** | **PEPs** (principal *exposure* portfolios) | Non-zero | 𝔼[PEP<sub>𝑘</sub>] = λ<sup>𝑠</sup><sub>𝑘</sub> (eigenvalue of Π<sub>𝑠</sub>) |
