@@ -93,7 +93,7 @@ SVD: $\Pi = U\,\Sigma\,V^\top$.
 
 <p align="center">
   <img 
-    src="https://latex.codecogs.com/svg.image?\color{blue}%20L_k%20%3D%20v_k%20u_k%5E%5Ctop%2C%20%5Cquad%20PP_k%28t%2B1%29%20%3D%20S_t%5E%5Ctop%20L_k%20R_%7Bt%2B1%7D%2C%20%5Cquad%20%5Cmathbb%7BE%7D%5BPP_k%5D%20%3D%20%5Csigma_k"  
+    src="https://latex.codecogs.com/svg.image?\color{cyan}%20L_k%20%3D%20v_k%20u_k%5E%5Ctop%2C%20%5Cquad%20PP_k%28t%2B1%29%20%3D%20S_t%5E%5Ctop%20L_k%20R_%7Bt%2B1%7D%2C%20%5Cquad%20%5Cmathbb%7BE%7D%5BPP_k%5D%20%3D%20%5Csigma_k"  
     alt="L_k = v_k u_k^⊤,  PP_k(t+1) = S_t^⊤ L_k R_{t+1},  E[PP_k] = σ_k" 
   />
 </p>
