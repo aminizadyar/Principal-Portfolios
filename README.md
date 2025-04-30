@@ -96,7 +96,7 @@ We bound the overall size of the position matrix by ‖$L$‖ ≤ 1. The constra
 $$
 \max_{L}\;\mathbb{E}[S_t^\top L R_{t+1}]
 \quad\Longrightarrow\quad
-L^* = (\Pi^\top \Pi)^{-1/2}\,\Pi^\top,
+L^* = (\Pi^\top \Pi)^{-1/2}\ \Pi^\top,
 $$
 
 The optimal position matrix is denoted by $L^*$ and is expressed in terms of the prediction matrix.
