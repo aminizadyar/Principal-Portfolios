@@ -39,8 +39,8 @@ import pandas as pd
 from principal_portfolios import utils, principal_portfolios as pp
 
 # 1) Load panels of excess returns  (T × N)  and predictive signals  (T × N)
-returns = pd.read_parquet("returns.parquet")          # e.g. monthly portfolio returns
-signals = pd.read_parquet("signals.parquet")          # any set of stock-level signals
+returns = pd.csv("returns.parquet")          # e.g. monthly portfolio returns
+signals = pd.csv("signals.parquet")          # any set of asset-level signals
 
 # 2) Build Principal Portfolios in one call
 #    – 120-month (10-year) rolling estimation window
