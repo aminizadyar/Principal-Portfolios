@@ -4,7 +4,7 @@
 [![Python](https://img.shields.io/pypi/pyversions/principal_portfolios.svg)](https://pypi.org/project/principal_portfolios)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#license)
 
-> A pure-Python implementation of the **Principal Portfolios** framework introduced by Kelly, Malamud & Pedersen (2023) for turning *signals* into optimal, testable trading strategies that exploit both own-asset and cross-asset predictability.
+> A pure-Python implementation of the **Principal Portfolios** framework introduced by Kelly, Malamud & Pedersen (2023), *The Journal of Finance* for turning *signals* into optimal trading strategies that exploit both own-asset and cross-asset predictability.
 
 ---
 
@@ -69,7 +69,7 @@ $$
 \Pi_{ij} = \mathbb{E}[R_{i,t+1} S_{j,t}].
 $$
 
-The entire $\Pi$ (not just its diagonal) embeds cross-asset predictive structure.
+The entire $\Pi$ (not just its diagonal) embeds cross-asset predictive signals.
 
 ---
 
@@ -98,7 +98,7 @@ SVD: $\Pi = U\,\Sigma\,V^\top$.
   />
 </p>
 
-*Timeable portfolios*: the top-$k$ singular values pinpoint where predictability is strongest.
+*Timeable portfolios*: the top $k$ singular values pinpoint where predictability is strongest.
 
 ---
 
