@@ -61,7 +61,7 @@ print(results.keys())
 # ➜ dict_keys(['weights', 'returns', ...])
 ```
 
-A full notebook example lives in [`examples/`](examples/).
+You can find a fully worked example in the examples/ folder. It reproduces the results of Kelly, Malamud & Pedersen (2023) using this package.
 
 ---
 
