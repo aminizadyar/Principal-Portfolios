@@ -234,7 +234,7 @@ If you use this code in academic work, please cite both the package and the orig
   author  = {Amin Izadyar},
   title   = {Cross-asset Predictive Signals: Python implementation of Principal Portfolios},
   year    = {2025},
-  url     = {https://github.com/your-github-handle/principal_portfolios},
+  url     = {https://github.com/aminizadyar/Principal-Portfolios},
   version = {1.0.5}
 }
 
