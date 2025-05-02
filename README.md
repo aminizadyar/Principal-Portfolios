@@ -232,7 +232,7 @@ If you use this code in academic work, please cite both the package and the orig
 ```bibtex
 @software{principal_portfolios,
   author  = {Amin Izadyar},
-  title   = {Cross-asset Predictive Signals: Python implementation of Principal Portfolios},
+  title   = {Cross-asset Predictive Signals: Python Implementation of Principal Portfolios},
   year    = {2025},
   url     = {https://github.com/aminizadyar/Principal-Portfolios},
   version = {1.0.5}
