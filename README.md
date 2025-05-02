@@ -39,8 +39,8 @@ import pandas as pd
 from principal_portfolios import utils, principal_portfolios as pp
 
 # 1) Load panels of excess returns  (T × N)  and predictive signals  (T × N)
-returns = pd.read_csv("returns.parquet")          # e.g. monthly portfolio returns
-signals = pd.read_csv("signals.parquet")          # any set of asset-level signals
+returns = pd.read_csv("returns.csv")          # e.g. monthly portfolio returns
+signals = pd.read_csv("signals.csv")          # any set of asset-level signals
 
 # 2) Build Principal Portfolios in one call
 #    – 120-month (10-year) rolling estimation window
@@ -196,27 +196,32 @@ are direct, model-free evidence of mis-pricing.
 
 ## Package Features
 
-| Module        | What it does                          |
-|---------------|---------------------------------------|
-| `utils`       | Data prep, windowed estimators, signal scaling |
-| `pp.decompose`| SVD / eigendecomp with rank selection and shrinkage |
-| `pp.trade`    | Generates period-$t$ weights for PPs, PEPs, PAPs |
-| `backtest`    | Simple vectorised back-testing helpers |
-| `plotting`    | Performance charts (cumulative PnL, eigenvalue scree, etc.) |
+| Module          | What it does                                                                                                     |
+| --------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `utils.dates`   | Date handling: convert “YYYYMM” strings to month-end timestamps, compute multi-period pct returns                |
+| `utils.filters` | Data alignment: find common dates across DataFrames                                                              |
+| `utils.signals` | Signal preparation: build 1-month momentum series, cross-sectional ranking & demeaning                           |
+| `matrix`        | Core RS′ routines: compute cross-sectional R S′ products and rolling prediction matrices                         |
+| `decompose.pp`  | Principal Portfolio helpers: SVD, singular-value expected returns, position-matrix construction                  |
+| `decompose.pep` | Principal Eigenportfolio helpers: symmetric eigen-decomp, eigenvalue expected returns, positions                 |
+| `decompose.pap` | Principal Asymmetric Portfolio helpers: antisymmetric eigen-decomp, PAP expected returns, positions              |
+| `strategy`      | `build_PP`: end-to-end pipeline to generate PP/PEP/PAP weights, realized & expected returns, Sharpe, regressions |
+| `analytics`     | Performance metrics: Sharpe-ratio calculation, OLS regressions (annualized alpha & IR)                           |
+| `plotting`      | Visualization: singular-value/eigenvalue scree plots, realized-returns vs eigenvalue charts                      |
 
-*NumPy-only core; optional extras (`pandas`, `matplotlib`) auto-installed.*
 
 ---
 
 ## Project Roadmap
 
-- [x] Core decomposition & trading API  
+- [x] Python pacakage for principal portfolios
+- [x] Charting tools   
+- [x] Paper replication notebooks  
 - [ ] Transaction-cost aware back-tests  
-- [ ] Online (“rolling”) SVD with forgetting factor  
 - [ ] R & Julia ports  
-- [ ] Paper replication notebooks  
 
-Contributions via pull requests are welcome! See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+Contributions via pull requests are welcome!
 
 ---
 
