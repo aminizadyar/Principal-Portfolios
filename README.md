@@ -250,11 +250,6 @@ If you use this code in academic work, please cite both the package and the orig
 }
 ```
 
----
-
-## License
-
-Distributed under the MIT License — see [`LICENSE`](LICENSE) for details.
 
 
 
