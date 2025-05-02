@@ -183,7 +183,7 @@ def get_prediction_matrix(input_date, result_matrices, n_periods):
 
 # ============================================================================
 # Principal Portfolio (PP), Principal Exposure(PEP), and
-# Principal Asymmetric Portfolio (PAP) helper functions
+# Principal Alpha Portfolio (PAP) helper functions
 # ============================================================================
 
 def get_ith_PPs_expected_return(S, i):
