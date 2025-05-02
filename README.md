@@ -201,10 +201,10 @@ are direct, model-free evidence of mis-pricing.
 | `utils.dates`   | Date handling: convert “YYYYMM” strings to month-end timestamps, compute multi-period pct returns                |
 | `utils.filters` | Data alignment: find common dates across DataFrames                                                              |
 | `utils.signals` | Signal preparation: build 1-month momentum series, cross-sectional ranking & demeaning                           |
-| `matrix`        | Core RS′ routines: compute cross-sectional R S′ products and rolling prediction matrices                         |
-| `decompose.pp`  | Principal Portfolio helpers: SVD, singular-value expected returns, position-matrix construction                  |
-| `decompose.pep` | Principal Eigenportfolio helpers: symmetric eigen-decomp, eigenvalue expected returns, positions                 |
-| `decompose.pap` | Principal Asymmetric Portfolio helpers: antisymmetric eigen-decomp, PAP expected returns, positions              |
+| `preditcion_matrix`        | Core RS′ routines: compute cross-sectional R S′ products and rolling prediction matrices                         |
+| `PP`  | Principal Portfolio helpers: SVD, singular-value expected returns, position-matrix construction                  |
+| `PEP` | Principal Exposure Portfolio helpers: symmetric eigen-decomp, eigenvalue expected returns, positions                 |
+| `PAP` | Principal Asymmetric Portfolio helpers: antisymmetric eigen-decomp, PAP expected returns, positions              |
 | `strategy`      | `build_PP`: end-to-end pipeline to generate PP/PEP/PAP weights, realized & expected returns, Sharpe, regressions |
 | `analytics`     | Performance metrics: Sharpe-ratio calculation, OLS regressions (annualized alpha & IR)                           |
 | `plotting`      | Visualization: singular-value/eigenvalue scree plots, realized-returns vs eigenvalue charts                      |

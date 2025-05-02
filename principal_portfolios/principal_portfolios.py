@@ -182,7 +182,7 @@ def get_prediction_matrix(input_date, result_matrices, n_periods):
 
 
 # ============================================================================
-# Principal Portfolio (PP), Principal Eigenportfolio (PEP), and
+# Principal Portfolio (PP), Principal Exposure(PEP), and
 # Principal Asymmetric Portfolio (PAP) helper functions
 # ============================================================================
 
@@ -280,7 +280,7 @@ def first_n_PPs_position_matrix(U, VT, number_of_PPs):
 
 def get_ith_PEPs_expected_return(eigenvalues, i):
     """
-    Retrieve the expected return (eigenvalue) of the i-th Principal Eigenportfolio.
+    Retrieve the expected return (eigenvalue) of the i-th Principal Exposure Portfolio.
 
     Parameters
     ----------
@@ -299,7 +299,7 @@ def get_ith_PEPs_expected_return(eigenvalues, i):
 
 def get_ith_symmetric_position_matrix(eigenvectors, i):
     """
-    Build the position matrix for the i-th Principal Eigenportfolio (PEP).
+    Build the position matrix for the i-th Principal Exposure(PEP).
 
     This is the outer product of eigenvector w_i with itself (w_i w_i^T).
 
@@ -321,7 +321,7 @@ def get_ith_symmetric_position_matrix(eigenvectors, i):
 
 def first_n_PEPs_expected_return(eigenvalues, n):
     """
-    Sum the absolute expected returns of the first n Principal Eigenportfolios.
+    Sum the absolute expected returns of the first n Principal Exposure Portfolios.
 
     Uses absolute values to capture both long and short contributions.
 
@@ -345,7 +345,7 @@ def first_n_PEPs_expected_return(eigenvalues, n):
 
 def first_n_PEPs_position_matrix(eigenvectors, number_of_PEPs):
     """
-    Compute the average position matrix of the first n Principal Eigenportfolios.
+    Compute the average position matrix of the first n Principal Exposure Portfolios.
 
     Parameters
     ----------
@@ -368,7 +368,7 @@ def first_n_PEPs_position_matrix(eigenvectors, number_of_PEPs):
 
 def last_n_PEPs_position_matrix(eigenvectors, number_of_PEPs):
     """
-    Compute the average position matrix of the last n Principal Eigenportfolios.
+    Compute the average position matrix of the last n Principal Exposure Portfolios.
 
     Parameters
     ----------
@@ -392,7 +392,7 @@ def last_n_PEPs_position_matrix(eigenvectors, number_of_PEPs):
 
 def get_ith_PAPs_expected_return(filtered_eigenvalues_ta, i):
     """
-    Retrieve the expected return of the i-th Principal Asymmetric Portfolio.
+    Retrieve the expected return of the i-th Principal Alpha Portfolio.
 
     PAP expected return is defined as 2 × the imaginary part of the i-th
     eigenvalue of the antisymmetric prediction matrix.
@@ -414,7 +414,7 @@ def get_ith_PAPs_expected_return(filtered_eigenvalues_ta, i):
 
 def get_ith_asymmetric_position_matrix(real_part, imag_part, i):
     """
-    Construct the position matrix for the i-th Principal Asymmetric Portfolio (PAP).
+    Construct the position matrix for the i-th Principal Alpha Portfolio (PAP).
 
     This is the skew-symmetric outer product:
         w_real[:,i] w_imag[:,i]^T − w_imag[:,i] w_real[:,i]^T
@@ -440,7 +440,7 @@ def get_ith_asymmetric_position_matrix(real_part, imag_part, i):
 
 def first_n_PAPs_expected_return(filtered_eigenvalues_ta, n):
     """
-    Sum the expected returns of the first n Principal Asymmetric Portfolios.
+    Sum the expected returns of the first n Principal Alpha Portfolios.
 
     Parameters
     ----------
@@ -462,7 +462,7 @@ def first_n_PAPs_expected_return(filtered_eigenvalues_ta, n):
 
 def first_n_PAPs_position_matrix(real_part, imag_part, number_of_PAPs):
     """
-    Compute the average position matrix of the first n Principal Asymmetric Portfolios.
+    Compute the average position matrix of the first n Principal Alpha Portfolios.
 
     Parameters
     ----------
@@ -633,8 +633,8 @@ def build_PP(
     use_demeaned_returns=True
 ):
     """
-    Construct and evaluate Principal Portfolios (PP), Principal Eigenportfolios (PEP),
-    and Principal Asymmetric Portfolios (PAP) using historical returns and signals.
+    Construct and evaluate Principal Portfolios (PP), Principal Exposure (PEP),
+    and Principal Alpha Portfolios (PAP) using historical returns and signals.
 
     Parameters
     ----------
@@ -659,9 +659,9 @@ def build_PP(
     number_of_PPs_to_consider : int, default=3
         How many of the top singular‐value portfolios to aggregate in summary stats.
     number_of_PEPs_to_consider : int, default=3
-        How many of the top symmetric eigenportfolios to aggregate.
+        How many of the top symmetric exposure portfolios to aggregate.
     number_of_PAPs_to_consider : int, default=3
-        How many of the top asymmetric portfolios to aggregate.
+        How many of the top asymmetric alpha portfolios to aggregate.
     use_demeaned_returns : bool, default=True
         If True, cross‐sectionally demean returns before computing RS′.
 
@@ -733,14 +733,14 @@ def build_PP(
         # Decompose prediction_matrix via SVD for Principal Portfolios (PP)
         U, S, VT = np.linalg.svd(prediction_matrix)
 
-        # Symmetric part for Principal Eigenportfolios (PEP)
+        # Symmetric part for Principal Exposure (PEP)
         Sym = (prediction_matrix + prediction_matrix.T) / 2
         eigenvalues, eigenvectors = np.linalg.eig(Sym)
         idx = eigenvalues.argsort()[::-1]  # descending sort
         eigenvalues = eigenvalues[idx]
         eigenvectors = eigenvectors[:, idx]
 
-        # Antisymmetric part for Principal Asymmetric Portfolios (PAP)
+        # Antisymmetric part for Principal Alpha Portfolios (PAP)
         Asym = 0.5 * (prediction_matrix - prediction_matrix.T)
         eigvals_ta, eigvecs_ta = np.linalg.eig(Asym.T)
         order_ta = np.argsort(-eigvals_ta.imag)
@@ -905,7 +905,7 @@ def singular_values_vs_realized_returns_graph(output_dict, portfolios_key, numbe
     """
     Plot singular values, symmetric eigenvalues, antisymmetric eigenvalues,
     and corresponding average realized returns for Principal Portfolios (PP),
-    Principal Eigenportfolios (PEP), and Principal Asymmetric Portfolios (PAP).
+    Principal Exposure (PEP), and Principal Alpha Portfolios (PAP).
 
     Parameters
     ----------
